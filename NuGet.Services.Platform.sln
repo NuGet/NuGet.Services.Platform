@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.Services.Platform.Fac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.Services.Platform.Client", "src\NuGet.Services.Platform.Client\NuGet.Services.Platform.Client.csproj", "{3BE823F7-53AA-4263-A953-06BF643F0E43}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.Services.TestCommon", "src\NuGet.Services.TestCommon\NuGet.Services.TestCommon.csproj", "{30E5A7B6-F96A-412B-AC8F-9A279EC6A6DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,14 @@ Global
 		{3BE823F7-53AA-4263-A953-06BF643F0E43}.Release|x64.Build.0 = Release|Any CPU
 		{3BE823F7-53AA-4263-A953-06BF643F0E43}.Release|x86.ActiveCfg = Release|Any CPU
 		{3BE823F7-53AA-4263-A953-06BF643F0E43}.Release|x86.Build.0 = Release|Any CPU
+		{30E5A7B6-F96A-412B-AC8F-9A279EC6A6DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30E5A7B6-F96A-412B-AC8F-9A279EC6A6DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30E5A7B6-F96A-412B-AC8F-9A279EC6A6DE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{30E5A7B6-F96A-412B-AC8F-9A279EC6A6DE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{30E5A7B6-F96A-412B-AC8F-9A279EC6A6DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30E5A7B6-F96A-412B-AC8F-9A279EC6A6DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30E5A7B6-F96A-412B-AC8F-9A279EC6A6DE}.Release|x64.ActiveCfg = Release|Any CPU
+		{30E5A7B6-F96A-412B-AC8F-9A279EC6A6DE}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

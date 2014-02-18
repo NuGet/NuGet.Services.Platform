@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using Moq;
-using NuGet.Services.TestInfrastructure;
+using NuGet.Services.TestCommon;
 using Xunit;
 
 namespace NuGet.Services.ServiceModel

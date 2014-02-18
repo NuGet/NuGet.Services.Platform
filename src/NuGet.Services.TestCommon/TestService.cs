@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NuGet.Services.ServiceModel;
 
-namespace NuGet.Services.TestInfrastructure
+namespace NuGet.Services.TestCommon
 {
     public class TestService : NuGetService
     {

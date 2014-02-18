@@ -36,7 +36,6 @@
 		<BuildCommand>"$(NuGetExePath)" pack "$(ProjectPath)" -Properties "Configuration=$(Configuration);Platform=$(Platform)" $(NonInteractiveSwitch) -OutputDirectory "$(PackageOutputDir)" -symbols</BuildCommand>
 	</PropertyGroup>
 	<Target Name="Package" Condition="'$(BuildPackage)' == 'true' And '$(NuGetExePath)' != ''">
-		<Message Text="NUPKG IT!" Importance="high" />
 		<Exec Command="$(BuildCommand)" />
 	</Target>
 </Project>

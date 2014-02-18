@@ -8,7 +8,7 @@ using NuGet.Services.Configuration;
 using NuGet.Services.ServiceModel;
 using NuGet.Services.Storage;
 
-namespace NuGet.Services.TestInfrastructure
+namespace NuGet.Services.TestCommon
 {
     public class TestServiceHost : ServiceHost
     {
