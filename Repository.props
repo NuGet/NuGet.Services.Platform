@@ -3,8 +3,6 @@
   <!-- This file should always be at the root of the repository -->
   <ItemGroup>
     <SolutionFile Include="$(MSBuildThisFileDirectory)\*.sln" />
-
-    <!-- RoleProject = Any project that represents a CCProj -->
   </ItemGroup>
 
   <PropertyGroup>
