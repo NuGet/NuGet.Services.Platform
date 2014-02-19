@@ -75,18 +75,6 @@ namespace NuGet.Services.Client
             var settings = camelCase ? _serializerSettings : _nonCamelCasedSettings;
             return JsonConvert.SerializeObject(data, _serializerSettings);
         }
-
-        public static Task<T> DeserializeAsync<T>(string content)
-        {
-            return JsonConvert.DeserializeObjectAsync<T>(content, _serializerSettings);
-        }
-
-        public static Task<string> SerializeAsync(object data) { return SerializeAsync(data, camelCase: true); }
-        public static Task<string> SerializeAsync(object data, bool camelCase)
-        {
-            var settings = camelCase ? _serializerSettings : _nonCamelCasedSettings;
-            return JsonConvert.SerializeObjectAsync(data, settings.Formatting, settings);
-        }
     }
 
     public class NuGetContractResolver : CamelCasePropertyNamesContractResolver

@@ -178,7 +178,7 @@ namespace NuGet.Services.Http.Middleware
         {
             context.Response.StatusCode = (int)HttpStatusCode.OK;
             context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync(await JsonFormat.SerializeAsync(value));
+            await context.Response.WriteAsync(JsonFormat.Serialize(value));
         }
     }
 
