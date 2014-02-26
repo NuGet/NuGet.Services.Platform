@@ -17,13 +17,14 @@ using NuGet.Services.ServiceModel;
 
 namespace NuGet.Services.Azure
 {
-    public class AzureServiceHost : ServiceHost
+    public class AzureServiceHost : ServiceHost, IDisposable
     {
         private static readonly Regex RoleIdMatch = new Regex(@"^(.*)_IN_(?<id>\d+)$");
 
         private NuGetWorkerRole _worker;
         private ServiceHostDescription _description;
         private ObservableEventListener _platformEventStream;
+        private List<IDisposable> _subscriptions = new List<IDisposable>();
 
         public override ServiceHostDescription Description
         {
@@ -64,6 +65,14 @@ namespace NuGet.Services.Azure
             }
         }
 
+        public void Dispose()
+        {
+            foreach (var sub in _subscriptions)
+            {
+                sub.Dispose();
+            }
+        }
+
         protected override IEnumerable<ServiceDefinition> GetServices()
         {
             return _worker.GetServices();
@@ -93,7 +102,7 @@ namespace NuGet.Services.Azure
                 var logFile = Path.Combine(logsResource.RootPath, "Platform", "Platform.log.json");
 
                 // Initialize core platform logging
-                _platformEventStream.LogToRollingFlatFile(
+                _subscriptions.Add(_platformEventStream.LogToRollingFlatFile(
                     fileName: logFile,
                     rollSizeKB: 1024,
                     timestampPattern: "yyyyMMdd-HHmmss",
@@ -101,7 +110,7 @@ namespace NuGet.Services.Azure
                     rollInterval: RollInterval.Hour,
                     formatter: new JsonEventTextFormatter(EventTextFormatting.Indented, dateTimeFormat: "O"),
                     maxArchivedFiles: 768, // We have a buffer size of 1024MB for this folder
-                    isAsync: false);
+                    isAsync: false));
             }
             catch (Exception ex)
             {
@@ -112,10 +121,10 @@ namespace NuGet.Services.Azure
 
         protected override void InitializeCloudLogging()
         {
-            _platformEventStream.LogToWindowsAzureTable(
+            _subscriptions.Add(_platformEventStream.LogToWindowsAzureTable(
                 instanceName: Description.InstanceName.ToString() + "/" + Description.MachineName,
                 connectionString: Storage.Primary.ConnectionString,
-                tableAddress: Storage.Primary.Tables.GetTableFullName("PlatformTrace"));
+                tableAddress: Storage.Primary.Tables.GetTableFullName("PlatformTrace")));
         }
 
         private ServiceHostInstanceName GetHostName()
