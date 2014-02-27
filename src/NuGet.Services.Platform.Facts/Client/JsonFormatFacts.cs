@@ -33,6 +33,34 @@ namespace NuGet.Services.Client
             }
 
             [Fact]
+            public void SerializesFloats()
+            {
+                Assert.Equal(
+@"{
+  ""fooBar"": 4.2
+}",
+                    JsonFormat.Serialize(new { FooBar = 4.2 }));
+            }
+
+            [Fact]
+            public void IgnoresNullFields()
+            {
+                Assert.Equal(
+@"{}",
+                    JsonFormat.Serialize(new { FooBar = (object)null }));
+            }
+
+            [Fact]
+            public void IncludesDefaultValues()
+            {
+                Assert.Equal(
+@"{
+  ""fooBar"": 0
+}",
+                    JsonFormat.Serialize(new { FooBar = 0 }));
+            }
+
+            [Fact]
             public void UsesIsoDateFormat()
             {
                 Assert.Equal(
