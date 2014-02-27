@@ -73,7 +73,7 @@ namespace NuGet.Services.Client
         public static string Serialize(object data, bool camelCase)
         {
             var settings = camelCase ? _serializerSettings : _nonCamelCasedSettings;
-            return JsonConvert.SerializeObject(data, _serializerSettings);
+            return JsonConvert.SerializeObject(data, settings);
         }
     }
 

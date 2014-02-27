@@ -59,8 +59,9 @@
     <Reference Include="Moq">
       <HintPath>..\..\packages\Moq.4.1.1309.1617\lib\net40\Moq.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -97,6 +98,7 @@
     <Compile Include="$(CommonSourceDirectory)\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Client\JsonFormatFacts.cs" />
     <Compile Include="ClockFacts.cs" />
     <Compile Include="Configuration\ConfigurationHubFacts.cs" />
     <Compile Include="Configuration\StorageConfigurationFacts.cs" />
@@ -112,6 +114,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NuGet.Services.Platform.Client\NuGet.Services.Platform.Client.csproj">
+      <Project>{3be823f7-53aa-4263-a953-06bf643f0e43}</Project>
+      <Name>NuGet.Services.Platform.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NuGet.Services.Platform\NuGet.Services.Platform.csproj">
       <Project>{ef86883e-a1b4-4052-9222-51a01c6c41cd}</Project>
       <Name>NuGet.Services.Platform</Name>
