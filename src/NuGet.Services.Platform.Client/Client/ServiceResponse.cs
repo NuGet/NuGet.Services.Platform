@@ -20,19 +20,27 @@ namespace NuGet.Services.Client
 
     public class ServiceResponse<T>
     {
+        private Func<Task<T>> _reader;
+
         public HttpResponseMessage HttpResponse { get; private set; }
         public HttpStatusCode StatusCode { get { return HttpResponse.StatusCode; } }
         public bool IsSuccessStatusCode { get { return HttpResponse.IsSuccessStatusCode; } }
         public string ReasonPhrase { get { return HttpResponse.ReasonPhrase; } }
 
         public ServiceResponse(HttpResponseMessage httpResponse)
+            : this(httpResponse, () => httpResponse.Content.ReadAsAsync<T>())
+        {
+        }
+
+        public ServiceResponse(HttpResponseMessage httpResponse, Func<Task<T>> reader)
         {
             HttpResponse = httpResponse;
+            _reader = reader;
         }
 
         public virtual Task<T> ReadContent()
         {
-            return HttpResponse.Content.ReadAsAsync<T>();
+            return _reader();
         }
     }
 
