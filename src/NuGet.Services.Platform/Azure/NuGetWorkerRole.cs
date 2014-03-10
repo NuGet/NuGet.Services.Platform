@@ -54,6 +54,14 @@ namespace NuGet.Services.Azure
                 ServicePlatformEventSource.Log.FatalException(ex);
                 throw;
             }
+            finally
+            {
+                var disp = _host as IDisposable;
+                if (disp != null)
+                {
+                    disp.Dispose();
+                }
+            }
         }
 
         public override bool OnStart()
