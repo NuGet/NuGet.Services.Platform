@@ -193,7 +193,6 @@
     <Compile Include="Configuration\SqlConfiguration.cs" />
     <Compile Include="Configuration\StorageConfiguration.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Http\Controllers\RootController.cs" />
     <Compile Include="Http\Filters\LocationHeaderFilter.cs" />
     <Compile Include="Http\Models\HostRootModel.cs" />
     <Compile Include="Http\Models\ServiceInstanceModel.cs" />
