@@ -61,16 +61,21 @@ namespace NuGet.Services.Http.Authentication
 
         protected override async Task ApplyResponseChallengeAsync()
         {
-            if (Context.Request.IsSecure)
+            // Basic Auth and requiring HTTPS is disruptive, so even when in active mode, only challenge when being asked to
+            AuthenticationResponseChallenge challenge = Helper.LookupChallenge(Options.AuthenticationType, AuthenticationMode.Passive);
+            if (challenge != null)
             {
-                // Only challenge if secure
-                Context.Response.Headers.Add("WWW-Authenticate", new[] { "Basic realm =\"" + Context.Request.Uri.Host + "\"" });
-            }
-            else
-            {
-                Context.Response.StatusCode = 403;
-                Context.Response.ContentType = "text/plain";
-                await Context.Response.WriteAsync(Strings.AdminKeyAuthenticationHandler_CannotAuthenticateOverHttp);
+                if (Context.Request.IsSecure)
+                {
+                    // Only challenge if secure
+                    Context.Response.Headers.Add("WWW-Authenticate", new[] { "Basic realm =\"" + Context.Request.Uri.Host + "\"" });
+                }
+                else
+                {
+                    Context.Response.StatusCode = 403;
+                    Context.Response.ContentType = "text/plain";
+                    await Context.Response.WriteAsync(Strings.AdminKeyAuthenticationHandler_CannotAuthenticateOverHttp);
+                }
             }
             await base.ApplyResponseChallengeAsync();
         }
