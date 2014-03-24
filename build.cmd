@@ -1,1 +1,1 @@
-@msbuild %~dp0build\BuildAll.msbuild /p:Platform="Any CPU" %*
+@powershell -NoLogo -NoProfile %~dp0build.ps1
