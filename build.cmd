@@ -1,1 +1,1 @@
-@powershell -NoLogo -NoProfile %~dp0build.ps1
+@msbuild build.msbuild %*
