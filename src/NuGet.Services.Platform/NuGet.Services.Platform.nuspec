@@ -17,6 +17,5 @@
     </metadata>
     <files>
         <file src="bin\$configuration$\NuGet.Services.Platform.dll.config" target="lib\net45" />
-        <file src="bin\$configuration$\NuGet.Services.Platform.dll" target="lib\net45" />
     </files>
 </package>
