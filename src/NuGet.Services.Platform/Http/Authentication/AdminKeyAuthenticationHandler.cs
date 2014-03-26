@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
@@ -61,8 +62,14 @@ namespace NuGet.Services.Http.Authentication
 
         protected override async Task ApplyResponseChallengeAsync()
         {
-            // Basic Auth and requiring HTTPS is disruptive, so even when in active mode, only challenge when being asked to
-            AuthenticationResponseChallenge challenge = Helper.LookupChallenge(Options.AuthenticationType, AuthenticationMode.Passive);
+            if (Context.Response.StatusCode != (int)HttpStatusCode.Unauthorized)
+            {
+                // No challenge unless we're saying the user is unauthorized.
+                return;
+            }
+
+            // Has there been a challenge request?
+            AuthenticationResponseChallenge challenge = Helper.LookupChallenge(Options.AuthenticationType, Options.AuthenticationMode);
             if (challenge != null)
             {
                 if (Context.Request.IsSecure)
@@ -72,7 +79,8 @@ namespace NuGet.Services.Http.Authentication
                 }
                 else
                 {
-                    Context.Response.StatusCode = 403;
+                    // Challenge for Basic Auth
+                    Context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                     Context.Response.ContentType = "text/plain";
                     await Context.Response.WriteAsync(Strings.AdminKeyAuthenticationHandler_CannotAuthenticateOverHttp);
                 }
