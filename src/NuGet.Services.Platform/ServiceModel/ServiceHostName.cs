@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace NuGet.Services.ServiceModel
 {
+    [Serializable]
     public struct ServiceHostName : IEquatable<ServiceHostName>
     {
         private static readonly Regex Parser = new Regex(@"^-(?<host>[^\-]+)(?<rest>.+)?$", RegexOptions.IgnoreCase);

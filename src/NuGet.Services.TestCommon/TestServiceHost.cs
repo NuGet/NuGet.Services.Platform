@@ -72,5 +72,10 @@ namespace NuGet.Services.TestCommon
         protected override void InitializeCloudLogging()
         {
         }
+
+        protected override IEnumerable<string> GetHttpUrls()
+        {
+            return Enumerable.Empty<string>();
+        }
     }
 }

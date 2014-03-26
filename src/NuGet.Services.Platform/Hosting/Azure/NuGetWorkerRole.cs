@@ -9,7 +9,7 @@ using Microsoft.WindowsAzure.ServiceRuntime;
 using NuGet.Services.Http;
 using NuGet.Services.ServiceModel;
 
-namespace NuGet.Services.Azure
+namespace NuGet.Services.Hosting.Azure
 {
     public abstract class NuGetWorkerRole : RoleEntryPoint
     {

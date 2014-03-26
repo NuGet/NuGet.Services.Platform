@@ -9,6 +9,7 @@ using System.Diagnostics;
 
 namespace NuGet.Services.ServiceModel
 {
+    [Serializable]
     public class ServiceDefinition
     {
         public string Name { get; private set; }

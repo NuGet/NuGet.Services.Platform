@@ -52,7 +52,7 @@ namespace NuGet.Services.ServiceModel
         /// <summary>
         /// Starts all services in the host and blocks until they have completed starting.
         /// </summary>
-        public bool StartAndWait()
+        public virtual bool StartAndWait()
         {
             return Start().Result;
         }
@@ -60,11 +60,23 @@ namespace NuGet.Services.ServiceModel
         /// <summary>
         /// Starts all services, returning a task that will complete when they have completed starting
         /// </summary>
-        public async Task<bool> Start()
+        public virtual async Task<bool> Start()
         {
             var instances = await Task.WhenAll(Services.Values.Select(StartService));
             HttpServiceInstances = instances.OfType<NuGetHttpService>().ToList().AsReadOnly();
-            StartHttp(HttpServiceInstances);
+
+
+            ServicePlatformEventSource.Log.StartingHttpServices(Description.InstanceName);
+            try
+            {
+                _httpServerLifetime = StartHttp(HttpServiceInstances);
+            }
+            catch (Exception ex)
+            {
+                ServicePlatformEventSource.Log.ErrorStartingHttpServices(Description.InstanceName, ex);
+                throw;
+            }
+            ServicePlatformEventSource.Log.StartedHttpServices(Description.InstanceName);
 
             Instances = instances.Where(s => s != null).ToList().AsReadOnly();
             InstancesByType = new ReadOnlyDictionary<Type, NuGetService>(Instances.ToDictionary(s => s.GetType()));
@@ -76,7 +88,7 @@ namespace NuGet.Services.ServiceModel
         /// <summary>
         /// Runs all services, returning a task that will complete when they stop
         /// </summary>
-        public async Task Run()
+        public virtual async Task Run()
         {
             await Task.WhenAll(Instances.Select(RunService));
             foreach (var instance in Instances)
@@ -88,15 +100,10 @@ namespace NuGet.Services.ServiceModel
         /// <summary>
         /// Requests that all services shut down. Calling this will cause the task returned by Run to complete (eventually)
         /// </summary>
-        public void Shutdown()
+        public virtual void Shutdown()
         {
             ServicePlatformEventSource.Log.HostShutdownRequested(Description.InstanceName.ToString());
             _shutdownTokenSource.Cancel();
-        }
-
-        public virtual IPEndPoint GetEndpoint(string name)
-        {
-            return null;
         }
 
         public virtual string GetConfigurationSetting(string fullName)
@@ -158,42 +165,16 @@ namespace NuGet.Services.ServiceModel
             ServicePlatformEventSource.Log.HostStarted(Description.InstanceName.ToString());
         }
 
-        private void StartHttp(IEnumerable<NuGetHttpService> httpServices)
+        protected virtual IDisposable StartHttp(IEnumerable<NuGetHttpService> httpServices)
         {
-            var httpEndpoint = GetEndpoint("http");
-            var httpsEndpoint = GetEndpoint("https");
+            var urls = GetHttpUrls();
 
             // Set up start options
             var options = new StartOptions();
-            var httpConfig = Config.GetSection<HttpConfiguration>();
-            if (httpEndpoint != null)
-            {
-                options.Urls.Add("http://+:" + httpEndpoint.Port.ToString() + "/" + httpConfig.BasePath);
-                options.Urls.Add("http://localhost:" + httpEndpoint.Port.ToString() + "/" + httpConfig.BasePath);
-            }
-            if (httpsEndpoint != null)
-            {
-                options.Urls.Add("https://+:" + httpsEndpoint.Port.ToString() + "/" + httpConfig.BasePath);
-                options.Urls.Add("https://localhost:" + httpsEndpoint.Port.ToString() + "/" + httpConfig.BasePath);
-            }
-            if (options.Urls.Count == 0)
-            {
-                ServicePlatformEventSource.Log.MissingHttpEndpoints(Description.InstanceName);
-            }
-            else
-            {
-                ServicePlatformEventSource.Log.StartingHttpServices(Description.InstanceName, httpEndpoint, httpsEndpoint);
-                try
-                {
-                    _httpServerLifetime = WebApp.Start(options, app => ConfigureHttp(httpServices, app));
-                }
-                catch (Exception ex)
-                {
-                    ServicePlatformEventSource.Log.ErrorStartingHttpServices(Description.InstanceName, ex);
-                    throw;
-                }
-                ServicePlatformEventSource.Log.StartedHttpServices(Description.InstanceName);
-            }
+            options.Urls.AddRange(urls);
+            
+            // Start the app
+            return StartWebApp(httpServices, options);
         }
 
         public int AssignInstanceId()
@@ -225,7 +206,14 @@ namespace NuGet.Services.ServiceModel
             return builder.Build();
         }
 
-        private void ConfigureHttp(IEnumerable<NuGetHttpService> httpServices, IAppBuilder app)
+        protected IDisposable StartWebApp(IEnumerable<NuGetHttpService> httpServices, StartOptions options)
+        {
+            return WebApp.Start(options, app => BuildApp(httpServices, app));
+        }
+
+        protected virtual IEnumerable<string> GetHttpUrls() { return Enumerable.Empty<string>(); }
+
+        protected virtual void BuildApp(IEnumerable<NuGetHttpService> httpServices, IAppBuilder app)
         {
             // Add common host middleware in at the beginning of the pipeline
             var config = Config.GetSection<HttpConfiguration>();
@@ -254,6 +242,14 @@ namespace NuGet.Services.ServiceModel
         }
 
         protected virtual void ReportHostInitialized()
+        {
+        }
+
+        protected virtual void Started(NuGetService instance)
+        {
+        }
+
+        protected virtual void Starting(NuGetService instance)
         {
         }
 
@@ -331,7 +327,9 @@ namespace NuGet.Services.ServiceModel
             bool result = false;
             try
             {
+                Starting(instance);
                 result = await instance.Start(scope);
+                Started(instance);
             }
             catch (Exception ex)
             {

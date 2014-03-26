@@ -114,10 +114,10 @@ namespace NuGet.Services
             Level = EventLevel.Informational,
             Task = Tasks.HttpStartup,
             Opcode = EventOpcode.Start,
-            Message = "{0}: Starting HTTP Services. http {1}, https {2}")]
-        private void StartingHttpServices(string hostName, string http, string https) { WriteEvent(11, hostName, http, https); }
+            Message = "{0}: Starting HTTP Services.")]
+        private void StartingHttpServices(string hostName) { WriteEvent(11, hostName); }
         [NonEvent]
-        public void StartingHttpServices(ServiceHostInstanceName name, IPEndPoint http, IPEndPoint https) { StartingHttpServices(name.ToString(), http == null ? "<disabled>" : ("on port " + http.Port.ToString()), https == null ? "<disabled>" : ("on port " + https.Port.ToString())); }
+        public void StartingHttpServices(ServiceHostInstanceName name) { StartingHttpServices(name.ToString()); }
 
         [Event(
             eventId: 12,

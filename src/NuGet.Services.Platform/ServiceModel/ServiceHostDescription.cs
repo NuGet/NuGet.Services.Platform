@@ -5,6 +5,7 @@ using System.Text;
 
 namespace NuGet.Services.ServiceModel
 {
+    [Serializable]
     public class ServiceHostDescription
     {
         public ServiceHostInstanceName InstanceName { get; private set; }
