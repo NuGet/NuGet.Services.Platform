@@ -16,6 +16,7 @@ namespace NuGet.Services.Hosting
     {
         private NuGetStartOptions _options;
         private Func<string, string> _configProvider;
+        private IEnumerable<ServiceDefinition> _services;
         protected ObservableEventListener EventListener { get; private set; }
 
         public IObservable<EventEntry> EventStream { get; private set; }
@@ -31,11 +32,29 @@ namespace NuGet.Services.Hosting
             }
             else if (_options.Configuration != null)
             {
-                _configProvider = s => _options.Configuration[s];
+                _configProvider = s => {
+                    string val;
+                    if (!_options.Configuration.TryGetValue(s, out val))
+                    {
+                        return null;
+                    }
+                    return val;
+                };
             }
             else
             {
                 _configProvider = ConfigurationManager.AppSettings.Get;
+            }
+
+            // Resolve services
+            var allServices = ServiceDefinition.GetAllServicesInAppDomain();
+            if (options.Services.Any())
+            {
+                _services = options.Services.Select(s => ResolveService(s, allServices)).Where(s => s != null);
+            }
+            else
+            {
+                _services = allServices.Values;
             }
         }
 
@@ -52,7 +71,7 @@ namespace NuGet.Services.Hosting
 
         protected override IEnumerable<ServiceDefinition> GetServices()
         {
-            return _options.Services;
+            return _services;
         }
 
         protected override void Starting(NuGetService instance)
@@ -72,6 +91,10 @@ namespace NuGet.Services.Hosting
         
         protected override IDisposable StartHttp(IEnumerable<NuGetHttpService> httpServices)
         {
+            foreach (var url in _options.Urls)
+            {
+                ServicePlatformEventSource.Log.BindingHttp(url);
+            }
             return StartWebApp(httpServices, _options);
         }
 
@@ -80,6 +103,16 @@ namespace NuGet.Services.Hosting
             return new ServiceHostDescription(
                 ServiceHostInstanceName.Parse("nuget-local-0-" + hostName + "_IN0"),
                 Environment.MachineName);
+        }
+
+        private static ServiceDefinition ResolveService(string name, IDictionary<string, ServiceDefinition> allServices)
+        {
+            ServiceDefinition defn;
+            if (!allServices.TryGetValue(name, out defn))
+            {
+                return null;
+            }
+            return defn;
         }
     }
 }

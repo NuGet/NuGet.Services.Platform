@@ -19,33 +19,35 @@ namespace NuGet.Services.Hosting
             ServiceHost = host;
         }
 
-        public static Task<NuGetApp> Start(string name, string url, params ServiceDefinition[] services)
+        public static NuGetApp Create(string name, string url, params string[] services)
         {
-            return Start(BuildOptions(name, url, services));
+            return Create(BuildOptions(name, url, services));
         }
 
-        public static Task<NuGetApp> Start(string name, int httpPort, params ServiceDefinition[] services)
+        public static NuGetApp Create(string name, int httpPort, params string[] services)
         {
-            return Start(BuildOptions(name, httpPort, null, services));
+            return Create(BuildOptions(name, httpPort, null, services));
         }
 
-        public static Task<NuGetApp> Start(string name, int httpPort, int httpsPort, params ServiceDefinition[] services)
+        public static NuGetApp Create(string name, int httpPort, int httpsPort, params string[] services)
         {
-            return Start(BuildOptions(name, httpPort, httpsPort, services));
+            return Create(BuildOptions(name, httpPort, httpsPort, services));
         }
 
-        public static async Task<NuGetApp> Start(NuGetStartOptions options)
+        public static NuGetApp Create(NuGetStartOptions options)
         {
             // Create a host
             var host = new LocalServiceHost(options);
 
-            // Wrap it up in a NuGetApp and start it
+            // Wrap it up in a NuGetApp and initialize it
             var app = new NuGetApp(host);
-            if (await app.Start())
-            {
-                return app;
-            }
-            return null;
+            app.Initialize();
+            return app;
+        }
+
+        public void Initialize()
+        {
+            ServiceHost.Initialize();
         }
 
         public Task<bool> Start()
@@ -64,17 +66,17 @@ namespace NuGet.Services.Hosting
             ServiceHost.Shutdown();
         }
 
-        private static NuGetStartOptions BuildOptions(string name, string url, ServiceDefinition[] services)
+        private static NuGetStartOptions BuildOptions(string name, string url, IEnumerable<string> services)
         {
             return BuildOptions(name, new[] { url }, services);
         }
 
-        private static NuGetStartOptions BuildOptions(string name, int? httpPort, int? httpsPort, ServiceDefinition[] services)
+        private static NuGetStartOptions BuildOptions(string name, int? httpPort, int? httpsPort, IEnumerable<string> services)
         {
-            return BuildOptions(name, GetUrls(httpPort, httpsPort, String.Empty), services);
+            return BuildOptions(name, GetUrls(httpPort, httpsPort, String.Empty, localOnly: false), services);
         }
 
-        private static NuGetStartOptions BuildOptions(string name, IEnumerable<string> urls, IEnumerable<ServiceDefinition> services)
+        private static NuGetStartOptions BuildOptions(string name, IEnumerable<string> urls, IEnumerable<string> services)
         {
             var options = new NuGetStartOptions();
             
@@ -82,11 +84,8 @@ namespace NuGet.Services.Hosting
             {
                 options.Urls.Add(url);
             }
-            
-            foreach (var service in services)
-            {
-                options.Services.Add(service);
-            }
+
+            options.Services = services;
 
             options.AppDescription = new ServiceHostDescription(
                 ServiceHostInstanceName.Parse("nuget-local-0-" + name + "_IN0"),
@@ -95,17 +94,23 @@ namespace NuGet.Services.Hosting
             return options;
         }
 
-        internal static IEnumerable<string> GetUrls(int? httpPort, int? httpsPort, string basePath)
+        public static IEnumerable<string> GetUrls(int? httpPort, int? httpsPort, string basePath, bool localOnly)
         {
             if (httpPort != null)
             {
-                yield return "http://+:" + httpPort.Value.ToString() + "/" + basePath;
+                if (!localOnly)
+                {
+                    yield return "http://+:" + httpPort.Value.ToString() + "/" + basePath;
+                }
                 yield return "http://localhost:" + httpPort.Value.ToString() + "/" + basePath;
             }
 
             if (httpsPort != null)
             {
-                yield return "http://+:" + httpsPort.Value.ToString() + "/" + basePath;
+                if (!localOnly)
+                {
+                    yield return "http://+:" + httpsPort.Value.ToString() + "/" + basePath;
+                }
                 yield return "http://localhost:" + httpsPort.Value.ToString() + "/" + basePath;
             }
         }

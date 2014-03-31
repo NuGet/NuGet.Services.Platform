@@ -10,7 +10,7 @@ namespace NuGet.Services.Hosting
     [Serializable]
     public class NuGetStartOptions : StartOptions
     {
-        public IList<ServiceDefinition> Services { get; private set; }
+        public IEnumerable<string> Services { get; set; }
         public ServiceHostDescription AppDescription { get; set; }
         public Func<string, string> ConfigurationProvider { get; set; }
         public IDictionary<string, string> Configuration { get; set; }
@@ -18,7 +18,8 @@ namespace NuGet.Services.Hosting
         public NuGetStartOptions()
             : base()
         {
-            Services = new List<ServiceDefinition>();
+            Services = new List<string>();
+            Configuration = new Dictionary<string, string>();
         }
     }
 }

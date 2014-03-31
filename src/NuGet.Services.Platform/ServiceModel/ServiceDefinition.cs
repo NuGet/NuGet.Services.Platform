@@ -54,5 +54,17 @@ namespace NuGet.Services.ServiceModel
             }
             return new ServiceDefinition(name, type);
         }
+
+        public static IDictionary<string, ServiceDefinition> GetAllServicesInAppDomain()
+        {
+            return AppDomain
+                .CurrentDomain
+                .GetAssemblies()
+                .SelectMany(a =>
+                    a.GetExportedTypes()
+                     .Where(t => typeof(NuGetService).IsAssignableFrom(t) && t.IsClass && !t.IsAbstract)
+                     .Select(FromType))
+                .ToDictionary(s => s.Name, StringComparer.OrdinalIgnoreCase);
+        }
     }
 }

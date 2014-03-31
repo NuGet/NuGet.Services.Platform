@@ -65,7 +65,6 @@ namespace NuGet.Services.ServiceModel
             var instances = await Task.WhenAll(Services.Values.Select(StartService));
             HttpServiceInstances = instances.OfType<NuGetHttpService>().ToList().AsReadOnly();
 
-
             ServicePlatformEventSource.Log.StartingHttpServices(Description.InstanceName);
             try
             {
@@ -95,6 +94,7 @@ namespace NuGet.Services.ServiceModel
             {
                 instance.Dispose();
             }
+            ServicePlatformEventSource.Log.CleanShutdown(Description.InstanceName);
         }
 
         /// <summary>
@@ -171,7 +171,11 @@ namespace NuGet.Services.ServiceModel
 
             // Set up start options
             var options = new StartOptions();
-            options.Urls.AddRange(urls);
+            foreach (var url in urls)
+            {
+                ServicePlatformEventSource.Log.BindingHttp(url);
+                options.Urls.Add(url);
+            }
             
             // Start the app
             return StartWebApp(httpServices, options);

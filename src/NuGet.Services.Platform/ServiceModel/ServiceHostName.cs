@@ -11,7 +11,7 @@ namespace NuGet.Services.ServiceModel
     [Serializable]
     public struct ServiceHostName : IEquatable<ServiceHostName>
     {
-        private static readonly Regex Parser = new Regex(@"^-(?<host>[^\-]+)(?<rest>.+)?$", RegexOptions.IgnoreCase);
+        private static readonly Regex Parser = new Regex(@"^-(?<host>[^\-_]+)(?<rest>.+)?$", RegexOptions.IgnoreCase);
 
         public static readonly ServiceHostName Empty = new ServiceHostName();
 

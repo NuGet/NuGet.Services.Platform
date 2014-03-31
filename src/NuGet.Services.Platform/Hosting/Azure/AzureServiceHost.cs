@@ -79,7 +79,8 @@ namespace NuGet.Services.Hosting.Azure
             return NuGetApp.GetUrls(
                 http == null ? (int?)null : http.Port,
                 https == null ? (int?)null : https.Port,
-                config.BasePath);
+                config.BasePath,
+                localOnly: false);
         }
 
         protected override IEnumerable<ServiceDefinition> GetServices()
