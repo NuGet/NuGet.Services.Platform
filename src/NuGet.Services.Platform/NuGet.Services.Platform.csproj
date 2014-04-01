@@ -158,8 +158,12 @@
     <Compile Include="Configuration\HttpConfiguration.cs" />
     <Compile Include="Hosting\Azure\AzureServiceHost.cs" />
     <Compile Include="Hosting\Azure\NuGetWorkerRole.cs" />
+    <Compile Include="Hosting\ConsoleApplicationHost.cs" />
+    <Compile Include="Hosting\IApplicationHost.cs" />
     <Compile Include="Hosting\LocalServiceHost.cs" />
+    <Compile Include="Hosting\LogEventEntry.cs" />
     <Compile Include="Hosting\NuGetApp.cs" />
+    <Compile Include="Hosting\NuGetDomainAgent.cs" />
     <Compile Include="Hosting\NuGetStartOptions.cs" />
     <Compile Include="Http\Authentication\AdminKeyAuthenticationMiddleware.cs" />
     <Compile Include="Http\Authentication\AdminKeyAuthenticationOptions.cs" />

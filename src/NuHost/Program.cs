@@ -13,17 +13,18 @@ using PowerArgs;
 
 namespace NuHost
 {
-    class Program
+    class Program : MarshalByRefObject
     {
+        private TaskCompletionSource<bool> _startTcs = new TaskCompletionSource<bool>();
+        private TaskCompletionSource<object> _runTcs = new TaskCompletionSource<object>();
+
         static void Main(string[] args)
         {
-            // IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT
-            // DO NOT reference ANY NuGet.* assemblies in this method
-            // All code in this method must be able to run using ONLY NuHost.exe, the BCL and the Copy-Local
-            // references (PowerArgs, etc.).
-            // The NuGet.* assemblies are intentionally NOT marked as Copy-Local so that they can be resolved
-            // local to the 
+            new Program().Run(args).Wait();
+        }
 
+        public async Task Run(string[] args) 
+        {
             if (args.Length > 0 && String.Equals("dbg", args[0], StringComparison.OrdinalIgnoreCase))
             {
                 args = args.Skip(1).ToArray();
@@ -35,16 +36,6 @@ namespace NuHost
             // Set defaults
             parsed.BaseDirectory = parsed.BaseDirectory ?? Environment.CurrentDirectory;
 
-            // From here on, resolve assemblies based on the Base Directory we were provided, instead of the
-            // base directory of the EXE itself.
-            ResolveAssembliesFromDirectory(parsed.BaseDirectory);
-
-            // Now, in our new Assembly Resolution context, Run ALL THE THINGS!
-            RunServices(parsed).Wait();
-        }
-
-        static async Task RunServices(Arguments parsed)
-        {
             // Create start options
             NuGetStartOptions options = new NuGetStartOptions();
             options.AppDescription = new ServiceHostDescription(
@@ -60,67 +51,34 @@ namespace NuHost
                 options.Urls.Add(url);
             }
 
-            // Load assemblies in the current directory
-            var asmNames = Directory
-                .GetFiles(parsed.BaseDirectory)
-                .Select(s => Path.GetFileNameWithoutExtension(s))
-                .Distinct();
-            foreach (var asmName in asmNames)
+            // Find services platform
+            var platformAssemblyFile = Path.Combine(parsed.BaseDirectory, typeof(NuGetDomainAgent).Assembly.GetName().Name + ".dll");
+            if (!File.Exists(platformAssemblyFile))
             {
-                try
-                {
-                    Assembly.Load(asmName);
-                }
-                catch (Exception)
-                {
-                    // We're just pre-loading the assemblies, no worries if there's a failure
-                }
+                throw new InvalidOperationException("Unable to locate NuGet.Services.Platform.dll in base directory!");
             }
 
-            // Run!
-            var app = NuGetApp.Create(options);
-            
-            Console.WriteLine("Starting the service. Press Ctrl-C to shutdown");
-            Console.CancelKeyPress += (sender, args) =>
+            // Create the AppDomain
+            var setup = new AppDomainSetup()
             {
-                args.Cancel = true;
-                app.Shutdown();
+                ApplicationBase = parsed.BaseDirectory
             };
-            
-            app.EventStream.Subscribe(new ConsoleLoggingObserver());
-            
-            await app.Start();
-            
-            await app.Run();
-        }
-
-        // Borrowed from Katana (http://katanaproject.codeplex.com/SourceControl/latest#src/OwinHost/Program.cs)
-        [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFile", Justification = "By design")]
-        private static void ResolveAssembliesFromDirectory(string directory)
-        {
-            var cache = new Dictionary<string, Assembly>();
-            AppDomain.CurrentDomain.AssemblyResolve +=
-                (a, b) =>
-                {
-                    Assembly assembly;
-                    if (cache.TryGetValue(b.Name, out assembly))
-                    {
-                        return assembly;
-                    }
-
-                    string shortName = new AssemblyName(b.Name).Name;
-                    string path = Path.Combine(directory, shortName + ".dll");
-                    if (File.Exists(path))
-                    {
-                        assembly = Assembly.LoadFrom(path);
-                    }
-                    cache[b.Name] = assembly;
-                    if (assembly != null)
-                    {
-                        cache[assembly.FullName] = assembly;
-                    }
-                    return assembly;
-                };
+            var domain = AppDomain.CreateDomain("NuGetServices", null, setup);
+            dynamic agent = domain.CreateInstanceFromAndUnwrap(
+                platformAssemblyFile,
+                typeof(ConsoleApplicationHost).FullName);
+            try
+            {
+                agent.Run(options);
+            }
+            catch (AggregateException aex)
+            {
+                Console.WriteLine(aex.InnerException.ToString());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
     }
 }

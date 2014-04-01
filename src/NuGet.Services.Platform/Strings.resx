@@ -123,6 +123,12 @@
   <data name="AppLauncher_CouldNotLoadPlatform" xml:space="preserve">
     <value>Could not load NuGet Services Platform. Ensure the target service has at least version 3.0.3 of the services platform installed.</value>
   </data>
+  <data name="ConsoleApplicationHost_FailedToStart" xml:space="preserve">
+    <value>Failed to start service host!</value>
+  </data>
+  <data name="ConsoleApplicationHost_Running" xml:space="preserve">
+    <value>Service host is starting, press Ctrl-C to shut down.</value>
+  </data>
   <data name="DatacenterName_InvalidName" xml:space="preserve">
     <value>'{0}' is not a valid Datacenter Name. Expected a name in the format: "&lt;product&gt;-&lt;environment&gt;-&lt;datacenter id&gt;"</value>
   </data>

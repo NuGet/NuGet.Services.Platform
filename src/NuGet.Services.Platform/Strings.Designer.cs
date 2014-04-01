@@ -79,6 +79,24 @@ namespace NuGet.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to start service host!.
+        /// </summary>
+        internal static string ConsoleApplicationHost_FailedToStart {
+            get {
+                return ResourceManager.GetString("ConsoleApplicationHost_FailedToStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Service host is starting, press Ctrl-C to shut down..
+        /// </summary>
+        internal static string ConsoleApplicationHost_Running {
+            get {
+                return ResourceManager.GetString("ConsoleApplicationHost_Running", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid Datacenter Name. Expected a name in the format: &quot;&lt;product&gt;-&lt;environment&gt;-&lt;datacenter id&gt;&quot;.
         /// </summary>
         internal static string DatacenterName_InvalidName {
