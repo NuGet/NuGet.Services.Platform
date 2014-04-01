@@ -8,7 +8,12 @@ namespace NuGet.Services.Hosting
 {
     public interface IApplicationHost
     {
-        void Run(NuGetStartOptions options);
-        Task RunAsync(NuGetStartOptions options);
+        // This interface should rarely or never be modified. It defines
+        // how a Host App Domain communicates with the target App Domain
+        // If this is changed, old Host App Domains (nuhost.exe versions)
+        // may fail to bootstrap the Platform.
+
+        void Run(NuGetDomainStartOptions options);
+        Task RunAsync(NuGetDomainStartOptions options);
     }
 }

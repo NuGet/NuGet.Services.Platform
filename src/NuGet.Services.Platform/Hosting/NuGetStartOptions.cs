@@ -22,4 +22,11 @@ namespace NuGet.Services.Hosting
             Configuration = new Dictionary<string, string>();
         }
     }
+
+    [Serializable]
+    public class NuGetDomainStartOptions : NuGetStartOptions
+    {
+        public string HostApplicationBase { get; set; }
+        public string ApplicationBase { get; set; }
+    }
 }

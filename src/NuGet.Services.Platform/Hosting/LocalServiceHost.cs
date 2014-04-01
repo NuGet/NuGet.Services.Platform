@@ -56,11 +56,12 @@ namespace NuGet.Services.Hosting
             {
                 _services = allServices.Values;
             }
+
+            EventStream = EventListener = new ObservableEventListener();
         }
 
         protected override void InitializeLocalLogging()
         {
-            EventStream = EventListener = new ObservableEventListener();
             EventListener.EnableEvents(SemanticLoggingEventSource.Log, EventLevel.Informational);
             EventListener.EnableEvents(ServicePlatformEventSource.Log, EventLevel.LogAlways);
         }

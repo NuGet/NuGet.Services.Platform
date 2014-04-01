@@ -40,9 +40,7 @@ namespace NuGet.Services.Hosting
             var host = new LocalServiceHost(options);
 
             // Wrap it up in a NuGetApp and initialize it
-            var app = new NuGetApp(host);
-            app.Initialize();
-            return app;
+            return new NuGetApp(host);
         }
 
         public void Initialize()

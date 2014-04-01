@@ -23,11 +23,7 @@ namespace NuGet.Services.Test.Echo
 
         protected override async Task OnRun()
         {
-            while (!Host.ShutdownToken.IsCancellationRequested)
-            {
-                await Task.Delay(1000);
-                EchoServiceEventSource.Log.Heartbeat();
-            }
+            await Host.WhenShutdown();
         }
 
         public override IEnumerable<EventSource> GetEventSources()
@@ -44,6 +40,10 @@ namespace NuGet.Services.Test.Echo
                 {
                     message = "Put something in the 'message' query string parameter and I'll repeat it!";
                 }
+                else
+                {
+                    EchoServiceEventSource.Log.Echoing(message);
+                }
                 ctx.Response.ContentType = "text/plain";
                 await ctx.Response.WriteAsync(message);
             });
@@ -56,7 +56,7 @@ namespace NuGet.Services.Test.Echo
         public static readonly EchoServiceEventSource Log = new EchoServiceEventSource();
         private EchoServiceEventSource() { }
 
-        [Event(eventId: 1, Message="Thump!")]
-        public void Heartbeat() { WriteEvent(1); }
+        [Event(eventId: 1, Message="Echoing '{0}'")]
+        public void Echoing(string message) { WriteEvent(1, message); }
     }
 }

@@ -31,7 +31,8 @@ namespace NuGet.Services.ServiceModel
         private IContainer _container;
         private AssemblyInformation _runtimeInformation = typeof(ServiceHost).GetAssemblyInfo();
         private IDisposable _httpServerLifetime;
-
+        private TaskCompletionSource<object> _shutdownTcs = new TaskCompletionSource<object>();
+        
         private volatile int _nextId = 0;
 
         public abstract ServiceHostDescription Description { get; }
@@ -48,6 +49,11 @@ namespace NuGet.Services.ServiceModel
         private IReadOnlyDictionary<string, NuGetService> InstancesByName { get; set; }
 
         public AssemblyInformation RuntimeInformation { get { return _runtimeInformation; } }
+
+        protected ServiceHost()
+        {
+            _shutdownTokenSource.Token.Register(() => _shutdownTcs.TrySetResult(null));
+        }
 
         /// <summary>
         /// Starts all services in the host and blocks until they have completed starting.
@@ -208,6 +214,11 @@ namespace NuGet.Services.ServiceModel
             }
 
             return builder.Build();
+        }
+
+        public Task WhenShutdown()
+        {
+            return _shutdownTcs.Task;
         }
 
         protected IDisposable StartWebApp(IEnumerable<NuGetHttpService> httpServices, StartOptions options)

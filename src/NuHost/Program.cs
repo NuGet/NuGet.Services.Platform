@@ -13,7 +13,7 @@ using PowerArgs;
 
 namespace NuHost
 {
-    class Program : MarshalByRefObject
+    public class Program
     {
         private TaskCompletionSource<bool> _startTcs = new TaskCompletionSource<bool>();
         private TaskCompletionSource<object> _runTcs = new TaskCompletionSource<object>();
@@ -37,7 +37,12 @@ namespace NuHost
             parsed.BaseDirectory = parsed.BaseDirectory ?? Environment.CurrentDirectory;
 
             // Create start options
-            NuGetStartOptions options = new NuGetStartOptions();
+            NuGetDomainStartOptions options = new NuGetDomainStartOptions()
+            {
+                HostApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
+                ApplicationBase = parsed.BaseDirectory
+            };
+
             options.AppDescription = new ServiceHostDescription(
                 ServiceHostInstanceName.Parse("nuget-local-0-nuhost_IN" + Process.GetCurrentProcess().Id.ToString()),
                 Environment.MachineName);
@@ -45,40 +50,13 @@ namespace NuHost
             {
                 options.Services = parsed.Services.ToList();
             }
-            var urls = parsed.Urls ?? NuGetApp.GetUrls(parsed.HttpPort, parsed.HttpsPort, parsed.BasePath, localOnly: true);
+            var urls = parsed.Urls ?? NuGetApp.GetUrls(parsed.HttpPort, parsed.HttpsPort, parsed.HttpPath, localOnly: true);
             foreach (var url in urls)
             {
                 options.Urls.Add(url);
             }
 
-            // Find services platform
-            var platformAssemblyFile = Path.Combine(parsed.BaseDirectory, typeof(NuGetDomainAgent).Assembly.GetName().Name + ".dll");
-            if (!File.Exists(platformAssemblyFile))
-            {
-                throw new InvalidOperationException("Unable to locate NuGet.Services.Platform.dll in base directory!");
-            }
-
-            // Create the AppDomain
-            var setup = new AppDomainSetup()
-            {
-                ApplicationBase = parsed.BaseDirectory
-            };
-            var domain = AppDomain.CreateDomain("NuGetServices", null, setup);
-            dynamic agent = domain.CreateInstanceFromAndUnwrap(
-                platformAssemblyFile,
-                typeof(ConsoleApplicationHost).FullName);
-            try
-            {
-                agent.Run(options);
-            }
-            catch (AggregateException aex)
-            {
-                Console.WriteLine(aex.InnerException.ToString());
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
+            ConsoleApplicationHost.LaunchInNewAppDomain(options);
         }
     }
 }

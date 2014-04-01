@@ -31,6 +31,6 @@ namespace NuHost
 
         [ArgShortcut("-path")]
         [ArgDescription("(OPTIONAL) The root path to use for the service.")]
-        public string BasePath { get; set; }
+        public string HttpPath { get; set; }
     }
 }
