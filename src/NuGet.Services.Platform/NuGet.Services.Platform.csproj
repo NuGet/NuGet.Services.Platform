@@ -57,6 +57,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.Owin.2.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Owin.Host.HttpListener">
+      <HintPath>..\..\packages\Microsoft.Owin.Host.HttpListener.2.1.0\lib\net45\Microsoft.Owin.Host.HttpListener.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Owin.Hosting, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.Owin.Hosting.2.1.0\lib\net45\Microsoft.Owin.Hosting.dll</HintPath>
@@ -156,6 +159,14 @@
       <CustomToolNamespace>NuGet.Services</CustomToolNamespace>
     </EmbeddedResource>
     <Compile Include="Configuration\HttpConfiguration.cs" />
+    <Compile Include="Hosting\Azure\AzureServiceHost.cs" />
+    <Compile Include="Hosting\Azure\NuGetWorkerRole.cs" />
+    <Compile Include="Hosting\ConsoleApplicationHost.cs" />
+    <Compile Include="Hosting\IApplicationHost.cs" />
+    <Compile Include="Hosting\LocalServiceHost.cs" />
+    <Compile Include="Hosting\LogEventEntry.cs" />
+    <Compile Include="Hosting\NuGetApp.cs" />
+    <Compile Include="Hosting\NuGetStartOptions.cs" />
     <Compile Include="Http\Authentication\AdminKeyAuthenticationMiddleware.cs" />
     <Compile Include="Http\Authentication\AdminKeyAuthenticationOptions.cs" />
     <Compile Include="Http\Authentication\AdminKeyAuthenticationHandler.cs" />
@@ -166,7 +177,6 @@
     <Compile Include="Http\TransferBlobResult.cs" />
     <Compile Include="Roles.cs" />
     <Compile Include="ServiceModel\EnvironmentName.cs" />
-    <Compile Include="ServiceModel\LocalServiceHost.cs" />
     <Compile Include="ServiceModel\ServiceAttribute.cs" />
     <Compile Include="ServiceModel\ServiceDefinition.cs" />
     <Compile Include="ServiceModel\ServiceHostInstanceName.cs" />
@@ -174,8 +184,6 @@
     <Compile Include="Storage\DefaultTablePropertySerializer.cs" />
     <Compile Include="Storage\TablePropertySerializer.cs" />
     <Compile Include="TypeExtensions.cs" />
-    <Compile Include="Azure\AzureServiceHost.cs" />
-    <Compile Include="Azure\NuGetWorkerRole.cs" />
     <Compile Include="Clock.cs" />
     <Compile Include="Configuration\ICustomConfigurationSection.cs" />
     <Compile Include="Configuration\ConfigurationErrorsException.cs" />

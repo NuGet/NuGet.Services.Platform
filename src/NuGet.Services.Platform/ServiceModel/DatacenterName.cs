@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace NuGet.Services.ServiceModel
 {
+    [Serializable]
     public struct DatacenterName : IEquatable<DatacenterName>
     {
         private static readonly Regex Parser = new Regex(@"^-(?<dc>[0-9]+)(?<rest>.+)?$", RegexOptions.IgnoreCase);

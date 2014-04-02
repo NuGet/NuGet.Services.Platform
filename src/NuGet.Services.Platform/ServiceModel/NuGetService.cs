@@ -100,7 +100,7 @@ namespace NuGet.Services.ServiceModel
         /// <returns></returns>
         public virtual Task<object> GetCurrentStatus() { return Task.FromResult<object>(null); }
 
-        protected virtual IEnumerable<EventSource> GetTraceEventSources()
+        public virtual IEnumerable<EventSource> GetEventSources()
         {
             return Enumerable.Empty<EventSource>();
         }

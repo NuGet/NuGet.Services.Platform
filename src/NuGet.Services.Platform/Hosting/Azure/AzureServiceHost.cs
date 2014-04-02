@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Tracing;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Autofac;
 using Microsoft.Practices.EnterpriseLibrary.SemanticLogging;
 using Microsoft.Practices.EnterpriseLibrary.SemanticLogging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.SemanticLogging.Sinks;
 using Microsoft.WindowsAzure.ServiceRuntime;
+using NuGet.Services.Configuration;
 using NuGet.Services.ServiceModel;
 
-namespace NuGet.Services.Azure
+namespace NuGet.Services.Hosting.Azure
 {
     public class AzureServiceHost : ServiceHost, IDisposable
     {
@@ -43,7 +41,7 @@ namespace NuGet.Services.Azure
                 RoleEnvironment.CurrentRoleInstance.Id);
         }
 
-        public override IPEndPoint GetEndpoint(string name)
+        public IPEndPoint GetEndpoint(string name)
         {
             RoleInstanceEndpoint ep;
             if (!RoleEnvironment.CurrentRoleInstance.InstanceEndpoints.TryGetValue(name, out ep))
@@ -71,6 +69,18 @@ namespace NuGet.Services.Azure
             {
                 sub.Dispose();
             }
+        }
+
+        protected override IEnumerable<string> GetHttpUrls()
+        {
+            var http = GetEndpoint(Constants.HttpEndpoint);
+            var https = GetEndpoint(Constants.HttpsEndpoint);
+            var config = Config.GetSection<HttpConfiguration>();
+            return NuGetApp.GetUrls(
+                http == null ? (int?)null : http.Port,
+                https == null ? (int?)null : https.Port,
+                config.BasePath,
+                localOnly: false);
         }
 
         protected override IEnumerable<ServiceDefinition> GetServices()

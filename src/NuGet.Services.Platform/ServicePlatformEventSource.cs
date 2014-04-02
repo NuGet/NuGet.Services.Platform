@@ -114,10 +114,10 @@ namespace NuGet.Services
             Level = EventLevel.Informational,
             Task = Tasks.HttpStartup,
             Opcode = EventOpcode.Start,
-            Message = "{0}: Starting HTTP Services. http {1}, https {2}")]
-        private void StartingHttpServices(string hostName, string http, string https) { WriteEvent(11, hostName, http, https); }
+            Message = "{0}: Starting HTTP Services.")]
+        private void StartingHttpServices(string hostName) { WriteEvent(11, hostName); }
         [NonEvent]
-        public void StartingHttpServices(ServiceHostInstanceName name, IPEndPoint http, IPEndPoint https) { StartingHttpServices(name.ToString(), http == null ? "<disabled>" : ("on port " + http.Port.ToString()), https == null ? "<disabled>" : ("on port " + https.Port.ToString())); }
+        public void StartingHttpServices(ServiceHostInstanceName name) { StartingHttpServices(name.ToString()); }
 
         [Event(
             eventId: 12,
@@ -196,7 +196,7 @@ namespace NuGet.Services
         [Event(
             eventId: 20,
             Level = EventLevel.Error,
-            Message = "Exeception during HTTP request to {0}: {1}")]
+            Message = "Exception during HTTP request to {0}: {1}")]
         private void HttpException(string uri, string exception) { WriteEvent(20, uri, exception); }
         [NonEvent]
         public void HttpException(string uri, Exception ex) { HttpException(uri, ex.ToString()); }
@@ -204,10 +204,22 @@ namespace NuGet.Services
         [Event(
             eventId: 21,
             Level = EventLevel.Error,
-            Message = "Exeception during API request to {0} ({1}, {2}): {3}")]
+            Message = "Exception during API request to {0} ({1}, {2}): {3}")]
         private void ApiException(string uri, string controller, string action, string exception) { WriteEvent(21, uri, controller, action, exception); }
         [NonEvent]
         public void ApiException(string uri, string controller, string action, Exception ex) { ApiException(uri, controller, action, ex.ToString()); }
+
+        [Event(eventId: 22,
+            Level = EventLevel.Informational,
+            Message = "Binding HTTP to URL: {0}")]
+        public void BindingHttp(string url) { WriteEvent(22, url); }
+
+        [Event(eventId: 23,
+            Level = EventLevel.Informational,
+            Message = "{0}: Shutdown complete.")]
+        private void CleanShutdown(string hostName) { WriteEvent(23, hostName); }
+        [NonEvent]
+        public void CleanShutdown(ServiceHostInstanceName host) { CleanShutdown(host.ToString()); }
 
         public static class Tasks {
             public const EventTask HostStartup = (EventTask)0x01;

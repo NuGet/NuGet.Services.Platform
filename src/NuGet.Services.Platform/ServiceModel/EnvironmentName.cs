@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace NuGet.Services.ServiceModel
 {
+    [Serializable]
     public struct EnvironmentName : IEquatable<EnvironmentName>
     {
         private static readonly Regex Parser = new Regex(

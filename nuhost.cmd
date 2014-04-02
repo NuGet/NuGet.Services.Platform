@@ -1,0 +1,1 @@
+@%~dp0src\NuHost\bin\Debug\NuHost.exe %*
