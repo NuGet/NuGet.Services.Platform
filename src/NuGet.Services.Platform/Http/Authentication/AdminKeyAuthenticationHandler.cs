@@ -16,7 +16,7 @@ namespace NuGet.Services.Http.Authentication
         {
             // Based on http://lbadri.wordpress.com/2013/07/13/basic-authentication-with-asp-net-web-api-using-owin-middleware/
 
-            if (!Context.Request.IsSecure)
+            if (!Context.Request.IsSecure && !Options.AllowInsecure)
             {
                 // No authentication on insecure links
                 return Task.FromResult<AuthenticationTicket>(null);
@@ -62,18 +62,20 @@ namespace NuGet.Services.Http.Authentication
         protected override async Task ApplyResponseChallengeAsync()
         {
             // Basic Auth and requiring HTTPS is disruptive, so even when in active mode, only challenge when being asked to
-            AuthenticationResponseChallenge challenge = Helper.LookupChallenge(Options.AuthenticationType, AuthenticationMode.Passive);
+            AuthenticationResponseChallenge challenge = Helper.LookupChallenge(Options.AuthenticationType, Options.AuthenticationMode);
             if (challenge != null)
             {
-                if (Context.Request.IsSecure)
+                if (Context.Request.IsSecure || Options.AllowInsecure)
                 {
                     // Only challenge if secure
                     Context.Response.Headers.Add("WWW-Authenticate", new[] { "Basic realm =\"" + Context.Request.Uri.Host + "\"" });
                 }
-                else
+                else if(!Context.Get<bool>("NuGet.Auth.AdminKey.WroteHttpFailure"))
                 {
+                    Context.Set<bool>("NuGet.Auth.AdminKey.WroteHttpFailure", true);
                     Context.Response.StatusCode = 403;
                     Context.Response.ContentType = "text/plain";
+                    Context.Response.ReasonPhrase = Strings.AdminKeyAuthenticationHandler_CannotAuthenticateOverHttp;
                     await Context.Response.WriteAsync(Strings.AdminKeyAuthenticationHandler_CannotAuthenticateOverHttp);
                 }
             }

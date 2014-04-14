@@ -24,7 +24,23 @@ namespace System
                 GetOrDefault(metadata, "Branch"),
                 GetOrDefault(metadata, "CommitId"),
                 GetOrDefault(metadata, "BuildDateUtc"),
-                GetOrDefault(metadata, "RepositoryUrl"));
+                GetOrDefault(metadata, "RepositoryUrl"),
+                GetSemanticVersion(self));
+        }
+
+        public static string GetSemanticVersion(this Type self)
+        {
+            return GetSemanticVersion(self.Assembly);
+        }
+
+        public static string GetSemanticVersion(this Assembly self)
+        {
+            var attr = self.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+            if (attr == null)
+            {
+                return null;
+            }
+            return attr.InformationalVersion;
         }
 
         private static string GetOrDefault(Dictionary<string, string> dict, string key)

@@ -16,18 +16,20 @@ namespace NuGet.Services
         public string BuildCommit { get; private set; }
         public DateTimeOffset BuildDate { get; private set; }
         public Uri SourceCodeRepository { get; private set; }
+        public string SemanticVersion { get; private set; }
 
         [JsonConstructor]
-        public AssemblyInformation(string fullName, string buildBranch, string buildCommit, string buildDate, string sourceCodeRepository)
-            : this(new AssemblyName(fullName), buildBranch, buildCommit, buildDate, sourceCodeRepository)
+        public AssemblyInformation(string fullName, string buildBranch, string buildCommit, string buildDate, string sourceCodeRepository, string semanticVersion)
+            : this(new AssemblyName(fullName), buildBranch, buildCommit, buildDate, sourceCodeRepository, semanticVersion)
         {
         }
 
-        public AssemblyInformation(AssemblyName fullName, string buildBranch, string buildCommit, string buildDate, string sourceCodeRepository)
+        public AssemblyInformation(AssemblyName fullName, string buildBranch, string buildCommit, string buildDate, string sourceCodeRepository, string semanticVersion)
         {
             FullName = fullName;
             BuildBranch = buildBranch;
             BuildCommit = buildCommit;
+            SemanticVersion = semanticVersion;
 
             DateTimeOffset date;
             if (DateTimeOffset.TryParse(buildDate, out date))
@@ -42,18 +44,19 @@ namespace NuGet.Services
             }
         }
 
-        public AssemblyInformation(AssemblyName fullName, string buildBranch, string buildCommit, DateTimeOffset buildDate, Uri sourceCodeRepository)
-            : this(buildBranch, buildCommit, buildDate, sourceCodeRepository)
+        public AssemblyInformation(AssemblyName fullName, string buildBranch, string buildCommit, DateTimeOffset buildDate, Uri sourceCodeRepository, string semanticVersion)
+            : this(buildBranch, buildCommit, buildDate, sourceCodeRepository, semanticVersion)
         {
             FullName = fullName;
         }
 
-        public AssemblyInformation(string buildBranch, string buildCommit, DateTimeOffset buildDate, Uri sourceCodeRepository)
+        public AssemblyInformation(string buildBranch, string buildCommit, DateTimeOffset buildDate, Uri sourceCodeRepository, string semanticVersion)
         {
             BuildBranch = buildBranch;
             BuildCommit = buildCommit;
             BuildDate = buildDate;
             SourceCodeRepository = sourceCodeRepository;
+            SemanticVersion = semanticVersion;
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using NuGet.Services.Hosting;
 using NuGet.Services.ServiceModel;
 using PowerArgs;
@@ -15,15 +16,12 @@ namespace NuHost
 {
     public class Program
     {
-        private TaskCompletionSource<bool> _startTcs = new TaskCompletionSource<bool>();
-        private TaskCompletionSource<object> _runTcs = new TaskCompletionSource<object>();
-
         static void Main(string[] args)
         {
-            new Program().Run(args).Wait();
+            new Program().Run(args);
         }
 
-        public async Task Run(string[] args) 
+        public void Run(string[] args) 
         {
             if (args.Length > 0 && String.Equals("dbg", args[0], StringComparison.OrdinalIgnoreCase))
             {
@@ -32,6 +30,11 @@ namespace NuHost
             }
 
             var parsed = Args.Parse<Arguments>(args);
+            if (parsed.Help)
+            {
+                ArgUsage.GetStyledUsage<Arguments>().Write();
+                return;
+            }
 
             // Set defaults
             parsed.BaseDirectory = parsed.BaseDirectory ?? Environment.CurrentDirectory;
@@ -42,6 +45,10 @@ namespace NuHost
                 HostApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
                 ApplicationBase = parsed.BaseDirectory
             };
+            if (!String.IsNullOrEmpty(parsed.Configuration))
+            {
+                options.Configuration = JsonConvert.DeserializeObject<Dictionary<string, string>>(parsed.Configuration);
+            }
 
             options.AppDescription = new ServiceHostDescription(
                 ServiceHostInstanceName.Parse("nuget-local-0-nuhost_IN" + Process.GetCurrentProcess().Id.ToString()),

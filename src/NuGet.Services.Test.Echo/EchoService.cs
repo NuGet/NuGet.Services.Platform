@@ -33,19 +33,64 @@ namespace NuGet.Services.Test.Echo
 
         protected override void Configure(IAppBuilder app)
         {
-            app.Use(async (ctx, next) =>
+            app.Map(new PathString("/adminsOnly"), a =>
             {
-                var message = ctx.Request.Query.Get("message");
-                if(String.IsNullOrEmpty(message))
+                a.Use(async (ctx, next) =>
                 {
-                    message = "Put something in the 'message' query string parameter and I'll repeat it!";
-                }
-                else
+                    if (ctx.Request.User == null)
+                    {
+                        ctx.Authentication.Challenge();
+                    }
+                    else
+                    {
+                        ctx.Response.ContentType = "text/plain";
+                        await ctx.Response.WriteAsync("Welcome, admin!");
+                    }
+                });
+            });
+
+            app.Map(new PathString("/adminsGetExtra"), a =>
+            {
+                a.Use(async (ctx, next) =>
                 {
-                    EchoServiceEventSource.Log.Echoing(message);
-                }
-                ctx.Response.ContentType = "text/plain";
-                await ctx.Response.WriteAsync(message);
+                    ctx.Response.ContentType = "text/plain";
+                    await ctx.Response.WriteAsync("Welcome!");
+                    if (ctx.Request.User != null)
+                    {
+                        await ctx.Response.WriteAsync(" You are logged in!");
+                        if (ctx.Request.User.IsInRole(Roles.Admin))
+                        {
+                            await ctx.Response.WriteAsync(" And you are an admin!");
+                        }
+                    }
+                });
+            });
+
+            app.Map(new PathString("/echo"), a =>
+            {
+                a.Use(async (ctx, next) =>
+                {
+                    var message = ctx.Request.Query.Get("message");
+                    if (String.IsNullOrEmpty(message))
+                    {
+                        message = "Put something in the 'message' query string parameter and I'll repeat it!";
+                    }
+                    else
+                    {
+                        EchoServiceEventSource.Log.Echoing(message);
+                    }
+                    ctx.Response.ContentType = "text/plain";
+                    await ctx.Response.WriteAsync(message);
+                });
+            });
+
+            app.Map(new PathString(""), a =>
+            {
+                a.Use(async (ctx, next) =>
+                {
+                    ctx.Response.ContentType = "application/json";
+                    await ctx.Response.WriteAsync(@"{ 'operations': ['/adminsOnly', '/adminsGetExtra', '/echo'] }");
+                });
             });
         }
     }

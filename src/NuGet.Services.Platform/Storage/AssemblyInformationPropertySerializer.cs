@@ -19,6 +19,7 @@ namespace NuGet.Services.Storage
                 properties.Add(name + "_BuildBranch", EntityProperty.CreateEntityPropertyFromObject(asmInfo.BuildBranch));
                 properties.Add(name + "_BuildCommit", EntityProperty.CreateEntityPropertyFromObject(asmInfo.BuildCommit));
                 properties.Add(name + "_BuildDate", EntityProperty.CreateEntityPropertyFromObject(asmInfo.BuildDate.UtcDateTime));
+                properties.Add(name + "_SemanticVersion", EntityProperty.CreateEntityPropertyFromObject(asmInfo.SemanticVersion));
 
                 string repoStr;
                 if (asmInfo.SourceCodeRepository.IsAbsoluteUri)
@@ -42,6 +43,7 @@ namespace NuGet.Services.Storage
                 string buildCommit = GetOrDefault<string>(properties, name + "_BuildCommit");
                 DateTime buildDate = GetOrDefault<DateTime>(properties, name + "_BuildDate");
                 string repoStr = GetOrDefault<string>(properties, name + "_SourceCodeRepository");
+                string semVer = GetOrDefault<string>(properties, name + "_SemanticVersion");
 
                 Uri repo;
                 if (!Uri.TryCreate(repoStr, UriKind.RelativeOrAbsolute, out repo))
@@ -56,7 +58,8 @@ namespace NuGet.Services.Storage
                     buildBranch,
                     buildCommit,
                     new DateTimeOffset(buildDate, TimeSpan.Zero),
-                    repo);
+                    repo,
+                    semVer);
             }
             return null;
         }

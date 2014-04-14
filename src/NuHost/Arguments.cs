@@ -8,6 +8,11 @@ namespace NuHost
 {
     public class Arguments
     {
+        [ArgShortcut("-?")]
+        [ArgShortcut("-h")]
+        [ArgDescription("Shows help for the command")]
+        public bool Help { get; set; }
+
         [ArgShortcut("-b")]
         [ArgDescription("(OPTIONAL) The base directory in which to locate services. Leave blank to use the current directory")]
         public string BaseDirectory { get; set; }
@@ -32,5 +37,9 @@ namespace NuHost
         [ArgShortcut("-path")]
         [ArgDescription("(OPTIONAL) The root path to use for the service.")]
         public string HttpPath { get; set; }
+
+        [ArgShortcut("-c")]
+        [ArgDescription("JSON key/value pairs containing configuration data")]
+        public string Configuration { get; set; }
     }
 }

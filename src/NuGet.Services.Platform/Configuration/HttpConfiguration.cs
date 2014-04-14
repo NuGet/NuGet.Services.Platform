@@ -14,5 +14,8 @@ namespace NuGet.Services.Configuration
 
         [Description("The admin password used by external services")]
         public string AdminKey { get; set; }
+
+        [Description("Set this to allow insecure (HTTP) authenticated requests")]
+        public bool AllowInsecure { get; set; }
     }
 }

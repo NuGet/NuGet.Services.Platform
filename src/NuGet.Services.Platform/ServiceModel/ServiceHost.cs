@@ -237,7 +237,8 @@ namespace NuGet.Services.ServiceModel
                 app.UseAdminKeyAuthentication(new AdminKeyAuthenticationOptions()
                 {
                     Key = config.AdminKey,
-                    GrantedRole = Roles.Admin
+                    GrantedRole = Roles.Admin,
+                    AllowInsecure = config.AllowInsecure
                 });
             }
 

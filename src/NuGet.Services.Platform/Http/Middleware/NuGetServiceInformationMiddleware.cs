@@ -85,7 +85,7 @@ namespace NuGet.Services.Http.Middleware
         {
             // Generate an API Description
             var baseUri = GetBaseUri(context);
-            var api = new ApiDescription(baseUri, Host.HttpServiceInstances);
+            var api = new ApiDescription(baseUri, Host.HttpServiceInstances, Host.Instances);
 
             if (context.Authentication.User != null && context.Authentication.User.IsInRole(Roles.Admin))
             {
