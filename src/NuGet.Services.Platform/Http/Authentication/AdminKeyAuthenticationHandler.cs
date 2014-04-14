@@ -61,7 +61,11 @@ namespace NuGet.Services.Http.Authentication
 
         protected override async Task ApplyResponseChallengeAsync()
         {
-            // Basic Auth and requiring HTTPS is disruptive, so even when in active mode, only challenge when being asked to
+            if (Response.StatusCode != 401)
+            {
+                return;
+            }
+
             AuthenticationResponseChallenge challenge = Helper.LookupChallenge(Options.AuthenticationType, Options.AuthenticationMode);
             if (challenge != null)
             {

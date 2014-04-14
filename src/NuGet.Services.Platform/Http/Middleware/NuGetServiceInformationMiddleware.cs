@@ -52,6 +52,7 @@ namespace NuGet.Services.Http.Middleware
                 // Force admin key authentication
                 if (context.Authentication.User == null)
                 {
+                    context.Response.StatusCode = 401;
                     context.Authentication.Challenge();
                 }
                 else
@@ -65,6 +66,7 @@ namespace NuGet.Services.Http.Middleware
                 // Force admin key authentication
                 if (context.Authentication.User == null || !context.Authentication.User.IsInRole(Roles.Admin))
                 {
+                    context.Response.StatusCode = 401;
                     context.Authentication.Challenge();
                     return Task.FromResult<object>(null);
                 }
