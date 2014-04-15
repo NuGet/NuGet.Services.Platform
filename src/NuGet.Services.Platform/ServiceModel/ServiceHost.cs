@@ -143,6 +143,12 @@ namespace NuGet.Services.ServiceModel
             // This way, if the below code fails, we can see some kind of log as to why.
             InitializeLocalLogging();
 
+            var asmInfo = typeof(ServiceHost).GetAssemblyInfo();
+            ServicePlatformEventSource.Log.EntryPoint(
+                String.IsNullOrEmpty(asmInfo.SemanticVersion) ? asmInfo.FullName.Version.ToString() : asmInfo.SemanticVersion,
+                asmInfo.BuildCommit);
+            ServicePlatformEventSource.Log.CodeBase(typeof(ServiceHost).Assembly.CodeBase);
+            
             ServicePlatformEventSource.Log.HostStarting(Description.InstanceName.ToString());
             try
             {

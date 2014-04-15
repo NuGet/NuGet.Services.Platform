@@ -221,6 +221,16 @@ namespace NuGet.Services
         [NonEvent]
         public void CleanShutdown(ServiceHostInstanceName host) { CleanShutdown(host.ToString()); }
 
+        [Event(eventId: 24,
+            Level = EventLevel.Informational,
+            Message = "Starting NuGet Service Platform v{0} (Commit {1})")]
+        public void EntryPoint(string version, string commit) { WriteEvent(24, version, commit); }
+
+        [Event(eventId: 25,
+            Level = EventLevel.Informational,
+            Message = "Using NuGet.Services.Platform.dll from {0}")]
+        public void CodeBase(string url) { WriteEvent(25, url); }
+
         public static class Tasks {
             public const EventTask HostStartup = (EventTask)0x01;
             public const EventTask ServiceInitialization = (EventTask)0x02;
