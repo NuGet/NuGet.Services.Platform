@@ -107,9 +107,9 @@ namespace NuGet.Services.Hosting
             {
                 if (!localOnly)
                 {
-                    yield return "http://+:" + httpsPort.Value.ToString() + "/" + basePath;
+                    yield return "https://+:" + httpsPort.Value.ToString() + "/" + basePath;
                 }
-                yield return "http://localhost:" + httpsPort.Value.ToString() + "/" + basePath;
+                yield return "https://localhost:" + httpsPort.Value.ToString() + "/" + basePath;
             }
         }
 
