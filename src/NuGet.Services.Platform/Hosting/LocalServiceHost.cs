@@ -77,6 +77,11 @@ namespace NuGet.Services.Hosting
 
         protected override void Starting(NuGetService instance)
         {
+            foreach (var source in instance.GetEventSources())
+            {
+                EventListener.EnableEvents(source, EventLevel.Informational);
+            }
+
             base.Starting(instance);
 
             foreach (var eventSource in instance.GetEventSources())

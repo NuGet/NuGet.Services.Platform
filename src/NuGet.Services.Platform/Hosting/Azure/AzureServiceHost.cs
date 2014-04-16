@@ -137,6 +137,22 @@ namespace NuGet.Services.Hosting.Azure
                 tableAddress: Storage.Primary.Tables.GetTableFullName("PlatformTrace")));
         }
 
+        protected override void Starting(NuGetService instance)
+        {
+            // Start logging this service's events to azure storage
+            var serviceEventStream = new ObservableEventListener();
+            foreach (var source in instance.GetEventSources())
+            {
+                serviceEventStream.EnableEvents(source, EventLevel.Informational);
+            }
+            serviceEventStream.LogToWindowsAzureTable(
+                instanceName: instance.ServiceName.ToString(),
+                connectionString: Storage.Primary.ConnectionString,
+                tableAddress: Storage.Primary.Tables.GetTableFullName(instance.ServiceName.Name + "Trace"));
+
+            base.Starting(instance);
+        }
+
         private ServiceHostInstanceName GetHostName()
         {
             var hostName = GetConfigurationSetting("Host.Name");
