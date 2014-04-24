@@ -6,7 +6,7 @@ param(
     [Parameter(Mandatory=$false)][string]$RemoteRepositoryUrl)
 
 if(!$RemoteRepositoryUrl) {
-    $RemoteRepositoryUrl = "https://www.github.com/NuGet/$RepositoryName"
+    $RemoteRepositoryUrl = "https://github.com/NuGet/$RepositoryName"
 }
 if(!$Path) {
     $Path = Join-Path (Get-Location) $RepositoryName
