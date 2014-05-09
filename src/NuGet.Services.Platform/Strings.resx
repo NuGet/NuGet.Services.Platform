@@ -123,6 +123,18 @@
   <data name="AppLauncher_CouldNotLoadPlatform" xml:space="preserve">
     <value>Could not load NuGet Services Platform. Ensure the target service has at least version 3.0.3 of the services platform installed.</value>
   </data>
+  <data name="AzureHub_MissingCertificate" xml:space="preserve">
+    <value>Could not find an Azure Management Certificate. Use the "Azure.ManagementCertThumbprint" config setting to specify one.</value>
+  </data>
+  <data name="AzureHub_MissingSubscription" xml:space="preserve">
+    <value>Could not identify the Azure Subscription for the current environment. Expected the certificate to contain the Subscription Name and ID in the Target portion of the Subject Name. For example: "CN=nuget-env-0-service, OU=SubName[SubId], OU=azure-management, OU=env, OU=nuget-services ..."</value>
+  </data>
+  <data name="AzureHub_MissingSubscriptionConfigSetting" xml:space="preserve">
+    <value>"{0}" was specified in configuration, but "{1}" was not. BOTH "Azure.SubscriptionId" and "Azure.SubscriptionName" MUST be specified if one is specified.</value>
+  </data>
+  <data name="AzureHub_NullThumbprint" xml:space="preserve">
+    <value>&lt;null&gt;</value>
+  </data>
   <data name="ConsoleApplicationHost_FailedToStart" xml:space="preserve">
     <value>Failed to start service host!</value>
   </data>

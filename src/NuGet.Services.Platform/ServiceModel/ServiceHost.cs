@@ -22,6 +22,8 @@ using NuGet.Services.Http.Middleware;
 using NuGet.Services.Http.Authentication;
 using NuGet.Services.Http.Models;
 using Microsoft.Owin.Security;
+using System.Diagnostics.Tracing;
+using NuGet.Services.Work.Azure;
 
 namespace NuGet.Services.ServiceModel
 {

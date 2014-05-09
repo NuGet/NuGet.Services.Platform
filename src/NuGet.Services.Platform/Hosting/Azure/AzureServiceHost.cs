@@ -91,8 +91,7 @@ namespace NuGet.Services.Hosting.Azure
         protected override void InitializeLocalLogging()
         {
             _platformEventStream = new ObservableEventListener();
-            _platformEventStream.EnableEvents(SemanticLoggingEventSource.Log, EventLevel.Informational);
-            _platformEventStream.EnableEvents(ServicePlatformEventSource.Log, EventLevel.LogAlways);
+            _platformEventStream.EnableEvents(EventSources.PlatformSources, EventLevel.Informational);
 
             var formatter = new EventTextFormatter(dateTimeFormat: "O");
             _platformEventStream.Subscribe(evt =>
