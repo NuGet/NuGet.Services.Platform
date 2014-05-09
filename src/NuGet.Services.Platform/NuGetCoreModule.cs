@@ -6,6 +6,7 @@ using Autofac;
 using NuGet.Services.Configuration;
 using NuGet.Services.ServiceModel;
 using NuGet.Services.Storage;
+using NuGet.Services.Work.Azure;
 
 namespace NuGet.Services
 {
@@ -24,9 +25,18 @@ namespace NuGet.Services
 
             builder.RegisterInstance<ServiceHost>(_serviceHost);
             builder.RegisterType<ConfigurationHub>()
+                .AsSelf()
                 .UsingConstructor(typeof(ServiceHost))
                 .SingleInstance();
             builder.RegisterType<StorageHub>()
+                .AsSelf()
+                .UsingConstructor(typeof(ConfigurationHub))
+                .SingleInstance();
+            builder.RegisterType<AzureHub>()
+                .AsSelf()
+                .SingleInstance();
+            builder.RegisterType<CertificatesHub>()
+                .AsSelf()
                 .UsingConstructor(typeof(ConfigurationHub))
                 .SingleInstance();
             builder.RegisterInstance(Clock.RealClock).As<Clock>();
