@@ -29,13 +29,13 @@ namespace NuGet.Services.Work.Azure
             eventId: 3,
             Level = EventLevel.Error,
             Message = "One matching certificate found in {0} store. Thumbprint: {1}, Subject: {2}")]
-        public void SingleMatch(string storeLocation, string thumbprint, string subject) { WriteEvent(3, thumbprint, subject); }
+        public void SingleMatch(string storeLocation, string thumbprint, string subject) { WriteEvent(3, storeLocation, thumbprint, subject); }
 
         [Event(
             eventId: 4,
             Level = EventLevel.Error,
             Message = "Multiple matching certificate found in {0} store. Selecting Thumbprint: {1}, Subject: {2}")]
-        public void MultipleMatches(string storeLocation, string thumbprint, string subject) { WriteEvent(4, thumbprint, subject); }
+        public void MultipleMatches(string storeLocation, string thumbprint, string subject) { WriteEvent(4, storeLocation, thumbprint, subject); }
 
         [Event(
             eventId: 5,
