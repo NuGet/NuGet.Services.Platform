@@ -150,6 +150,9 @@
   <data name="MaxSizeStream_PositionIsPastMaximumAllowedLength" xml:space="preserve">
     <value>Operation would cause current position to move beyond the maximum allowed read length of {1}</value>
   </data>
+  <data name="NuGetHttpService_UnknownError" xml:space="preserve">
+    <value>An unknown error occurred.</value>
+  </data>
   <data name="NuGetServiceInformationMiddleware_Body" xml:space="preserve">
     <value>Sorry, I don't know how to make coffee. I can make a nice Earl Grey though!</value>
   </data>

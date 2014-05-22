@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceDefinition name="NuGet.Services.Test.Echo.Cloud" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2013-10.2.2">
+    <LoadBalancerProbes>
+        <LoadBalancerProbe name="Root" path="/" protocol="http" port="80" />
+    </LoadBalancerProbes>
+    <WorkerRole name="NuGet.Services.Test.Echo" vmsize="Small">
+        <Runtime executionContext="elevated" />
+        <Imports>
+            <Import moduleName="Diagnostics" />
+        </Imports>
+        <ConfigurationSettings>
+            <!-- The full name of the service host (i.e. nuget-int-0-work, nuget-prod-1-search, etc.) -->
+            <Setting name="Host.Name" />
+
+            <!-- The name of the service host -->
+            <Setting name="Storage.Primary" />
+        </ConfigurationSettings>
+        <Endpoints>
+            <InputEndpoint name="http" protocol="http" port="80" localPort="80" />
+        </Endpoints>
+        <LocalResources>
+            <LocalStorage name="Logs" cleanOnRoleRecycle="false" sizeInMB="2048" />
+            <LocalStorage name="Temp" cleanOnRoleRecycle="true" sizeInMB="2048" />
+        </LocalResources>
+    </WorkerRole>
+</ServiceDefinition>

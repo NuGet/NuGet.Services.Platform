@@ -21,11 +21,6 @@ namespace NuGet.Services.Test.Echo
 
         public EchoService(ServiceName name, ServiceHost host) : base(name, host) { }
 
-        protected override async Task OnRun()
-        {
-            await Host.WhenShutdown();
-        }
-
         public override IEnumerable<EventSource> GetEventSources()
         {
             yield return EchoServiceEventSource.Log;
@@ -81,6 +76,14 @@ namespace NuGet.Services.Test.Echo
                     }
                     ctx.Response.ContentType = "text/plain";
                     await ctx.Response.WriteAsync(message);
+                });
+            });
+
+            app.Map(new PathString("/throw"), a =>
+            {
+                a.Use(async (ctx, next) =>
+                {
+                    throw new Exception("Throw me a frickin' bone!");
                 });
             });
 

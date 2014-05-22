@@ -4,19 +4,23 @@ using System.Diagnostics;
 using System.Diagnostics.Tracing;
 using System.IO;
 using System.Net;
+using System.Reactive.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Microsoft.Practices.EnterpriseLibrary.SemanticLogging;
 using Microsoft.Practices.EnterpriseLibrary.SemanticLogging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.SemanticLogging.Sinks;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using NuGet.Services.Configuration;
+using NuGet.Services.Http;
 using NuGet.Services.ServiceModel;
 
 namespace NuGet.Services.Hosting.Azure
 {
     public class AzureServiceHost : ServiceHost, IDisposable
     {
+        private static readonly string DefaultHostName = "nuget-local-0-unknown";
         private static readonly Regex RoleIdMatch = new Regex(@"^(.*)_IN_(?<id>\d+)$");
 
         private NuGetWorkerRole _worker;
@@ -29,6 +33,8 @@ namespace NuGet.Services.Hosting.Azure
             get { return _description; }
         }
 
+        public EventLevel TraceLevel { get; private set; }
+
         public AzureServiceHost(NuGetWorkerRole worker)
         {
             // Set the maximum number of concurrent connections 
@@ -39,6 +45,33 @@ namespace NuGet.Services.Hosting.Azure
             _description = new ServiceHostDescription(
                 GetHostName(),
                 RoleEnvironment.CurrentRoleInstance.Id);
+        }
+
+        public override Task<bool> Start()
+        {
+            // Load the trace level if specified
+            string levelStr = GetConfigurationSetting("Trace.Level");
+            EventLevel level;
+            if (!String.IsNullOrEmpty(levelStr) && Enum.TryParse<EventLevel>(levelStr, true, out level))
+            {
+                TraceLevel = level;
+            }
+            else
+            {
+                TraceLevel = EventLevel.Warning;
+            }
+
+            RoleEnvironment.Changing += (_, __) => ConfigurationChanging();
+            RoleEnvironment.Changed += (_, __) => ConfigurationChanging();
+            RoleEnvironment.StatusCheck += (sender, e) =>
+            {
+                if (GetCurrentStatus() == ServiceStatus.Busy)
+                {
+                    e.SetBusy();
+                }
+            };
+
+            return base.Start();
         }
 
         public IPEndPoint GetEndpoint(string name)
@@ -91,7 +124,7 @@ namespace NuGet.Services.Hosting.Azure
         protected override void InitializeLocalLogging()
         {
             _platformEventStream = new ObservableEventListener();
-            _platformEventStream.EnableEvents(EventSources.PlatformSources, EventLevel.Informational);
+            _platformEventStream.EnableEvents(EventSources.PlatformSources, TraceLevel);
 
             var formatter = new EventTextFormatter(dateTimeFormat: "O");
             _platformEventStream.Subscribe(evt =>
@@ -130,31 +163,61 @@ namespace NuGet.Services.Hosting.Azure
 
         protected override void InitializeCloudLogging()
         {
-            _subscriptions.Add(_platformEventStream.LogToWindowsAzureTable(
-                instanceName: Description.InstanceName.ToString() + "/" + Description.MachineName,
-                connectionString: Storage.Primary.ConnectionString,
-                tableAddress: Storage.Primary.Tables.GetTableFullName("PlatformTrace")));
+            if (Storage.Primary != null)
+            {
+                _subscriptions.Add(_platformEventStream.LogToWindowsAzureTable(
+                    instanceName: Description.InstanceName.ToString() + "/" + Description.MachineName,
+                    connectionString: Storage.Primary.ConnectionString,
+                    tableAddress: Storage.Primary.Tables.GetTableFullName("PlatformTrace")));
+            }
         }
 
         protected override void Starting(NuGetService instance)
+        {
+            if (Storage.Primary != null)
+            {
+                InitializeServiceLogging(instance);
+            }
+
+            base.Starting(instance);
+        }
+
+        private void InitializeServiceLogging(NuGetService instance)
         {
             // Start logging this service's events to azure storage
             var serviceEventStream = new ObservableEventListener();
             foreach (var source in instance.GetEventSources())
             {
-                serviceEventStream.EnableEvents(source, EventLevel.Informational);
+                serviceEventStream.EnableEvents(source, TraceLevel);
             }
-            serviceEventStream.LogToWindowsAzureTable(
+
+            var mergedEvents = Observable.Merge(
+                serviceEventStream,
+                _platformEventStream.Where(evt => Equals(ServiceName.GetCurrent(), instance.ServiceName)));
+
+            mergedEvents.LogToWindowsAzureTable(
                 instanceName: instance.ServiceName.ToString(),
                 connectionString: Storage.Primary.ConnectionString,
                 tableAddress: Storage.Primary.Tables.GetTableFullName(instance.ServiceName.Name + "Trace"));
 
-            base.Starting(instance);
+            // Trace Http Requests
+            var httpEventStream = new ObservableEventListener();
+            httpEventStream.EnableEvents(HttpTraceEventSource.Log, EventLevel.LogAlways);
+            httpEventStream
+                .Where(e => Equals(ServiceName.GetCurrent(), instance.ServiceName))
+                .LogToWindowsAzureTable(
+                    instanceName: instance.ServiceName.ToString(),
+                    connectionString: Storage.Primary.ConnectionString,
+                    tableAddress: Storage.Primary.Tables.GetTableFullName(instance.ServiceName.Name + "Http"));
         }
 
         private ServiceHostInstanceName GetHostName()
         {
             var hostName = GetConfigurationSetting("Host.Name");
+            if(String.IsNullOrEmpty(hostName))
+            {
+                hostName = DefaultHostName;
+            }
             ServiceHostName name = ServiceHostName.Parse(hostName);
 
             // Try to parse out the instance index from the role instance ID
