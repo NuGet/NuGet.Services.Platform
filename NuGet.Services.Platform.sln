@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuHost", "src\NuHost\NuHost
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.Services.Test.Echo", "src\NuGet.Services.Test.Echo\NuGet.Services.Test.Echo.csproj", "{DFBDE216-CACB-4DBD-90C7-5F1180659897}"
 EndProject
-Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "NuGet.Services.Test.Echo.Cloud", "src\NuGet.Services.Test.Echo.Cloud\NuGet.Services.Test.Echo.Cloud.ccproj", "{09B2459E-4DC2-46E1-A703-6FEBFF97D11A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,14 +85,6 @@ Global
 		{DFBDE216-CACB-4DBD-90C7-5F1180659897}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DFBDE216-CACB-4DBD-90C7-5F1180659897}.Release|x64.ActiveCfg = Release|Any CPU
 		{DFBDE216-CACB-4DBD-90C7-5F1180659897}.Release|x86.ActiveCfg = Release|Any CPU
-		{09B2459E-4DC2-46E1-A703-6FEBFF97D11A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{09B2459E-4DC2-46E1-A703-6FEBFF97D11A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{09B2459E-4DC2-46E1-A703-6FEBFF97D11A}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{09B2459E-4DC2-46E1-A703-6FEBFF97D11A}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{09B2459E-4DC2-46E1-A703-6FEBFF97D11A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{09B2459E-4DC2-46E1-A703-6FEBFF97D11A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{09B2459E-4DC2-46E1-A703-6FEBFF97D11A}.Release|x64.ActiveCfg = Release|Any CPU
-		{09B2459E-4DC2-46E1-A703-6FEBFF97D11A}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
