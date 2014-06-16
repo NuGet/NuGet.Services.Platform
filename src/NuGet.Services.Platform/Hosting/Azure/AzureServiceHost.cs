@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.Practices.EnterpriseLibrary.SemanticLogging;
 using Microsoft.Practices.EnterpriseLibrary.SemanticLogging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.SemanticLogging.Sinks;
+using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using NuGet.Services.Configuration;
 using NuGet.Services.Http;
@@ -165,10 +166,10 @@ namespace NuGet.Services.Hosting.Azure
         {
             if (Storage.Primary != null)
             {
-                _subscriptions.Add(_platformEventStream.LogToWindowsAzureTable(
-                    instanceName: Description.InstanceName.ToString() + "/" + Description.MachineName,
-                    connectionString: Storage.Primary.ConnectionString,
-                    tableAddress: Storage.Primary.Tables.GetTableFullName("PlatformTrace")));
+				_subscriptions.Add(_platformEventStream.LogToWindowsAzureTable(
+	                instanceName: Description.InstanceName.ToString() + "/" + Description.MachineName,
+	                connectionString: Config.Storage.Primary.GetConnectionString(),
+	                tableAddress: "NGPlatformTrace"));
             }
         }
 
@@ -197,8 +198,8 @@ namespace NuGet.Services.Hosting.Azure
 
             mergedEvents.LogToWindowsAzureTable(
                 instanceName: instance.ServiceName.ToString(),
-                connectionString: Storage.Primary.ConnectionString,
-                tableAddress: Storage.Primary.Tables.GetTableFullName(instance.ServiceName.Name + "Trace"));
+                connectionString: Config.Storage.Primary.GetConnectionString(),
+                tableAddress: "NG" + instance.ServiceName.Name + "Trace");
 
             // Trace Http Requests
             var httpEventStream = new ObservableEventListener();

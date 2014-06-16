@@ -219,9 +219,7 @@
     <Compile Include="ServiceModel\ServiceDefinition.cs" />
     <Compile Include="ServiceModel\ServiceHostInstanceName.cs" />
     <Compile Include="ServiceModel\ServiceStatus.cs" />
-    <Compile Include="Storage\AssemblyInformationPropertySerializer.cs" />
-    <Compile Include="Storage\DefaultTablePropertySerializer.cs" />
-    <Compile Include="Storage\TablePropertySerializer.cs" />
+    <Compile Include="StorageExtensions.cs" />
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="Clock.cs" />
     <Compile Include="Configuration\ICustomConfigurationSection.cs" />
@@ -249,21 +247,6 @@
     <Compile Include="ServiceModel\ServiceHostName.cs" />
     <Compile Include="ServiceModel\ServiceName.cs" />
     <Compile Include="ServicePlatformEventSource.cs" />
-    <Compile Include="Storage\AzureQueue.cs" />
-    <Compile Include="Storage\AzureTable.cs" />
-    <Compile Include="Storage\AzureTableEntity.cs" />
-    <Compile Include="Storage\BlobStorageHub.cs" />
-    <Compile Include="Storage\PivotedAzureTable.cs" />
-    <Compile Include="Storage\PivotedTableEntity.cs" />
-    <Compile Include="Storage\PropertySerializerAttribute.cs" />
-    <Compile Include="Storage\QueueStorageHub.cs" />
-    <Compile Include="Storage\ReverseChronologicalRowKey.cs" />
-    <Compile Include="Storage\StorageAccountHub.cs" />
-    <Compile Include="Storage\StorageHelpers.cs" />
-    <Compile Include="Storage\StorageHub.cs" />
-    <Compile Include="Storage\TableProperty.cs" />
-    <Compile Include="Storage\TableStorageHub.cs" />
-    <Compile Include="Storage\TableStorageKey.cs" />
     <Compile Include="Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

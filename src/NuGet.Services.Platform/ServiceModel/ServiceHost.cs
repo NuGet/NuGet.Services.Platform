@@ -17,7 +17,6 @@ using Microsoft.Practices.EnterpriseLibrary.SemanticLogging;
 using NuGet.Services.Configuration;
 using NuGet.Services.Http;
 using NuGet.Services.Models;
-using NuGet.Services.Storage;
 using NuGet.Services.Http.Middleware;
 using NuGet.Services.Http.Authentication;
 using NuGet.Services.Http.Models;
@@ -41,7 +40,6 @@ namespace NuGet.Services.ServiceModel
 
         public CancellationToken ShutdownToken { get { return _shutdownTokenSource.Token; } }
 
-        public StorageHub Storage { get; private set; }
         public ConfigurationHub Config { get; private set; }
         public IReadOnlyDictionary<string, ServiceDefinition> Services { get; private set; }
         public IReadOnlyList<NuGetService> Instances { get; private set; }
@@ -162,7 +160,6 @@ namespace NuGet.Services.ServiceModel
                 _container = Compose();
                 
                 // Manually resolve components the host uses
-                Storage = _container.Resolve<StorageHub>();
                 Config = _container.Resolve<ConfigurationHub>();
 
                 // Report status

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Autofac;
 using NuGet.Services.Configuration;
 using NuGet.Services.ServiceModel;
-using NuGet.Services.Storage;
 
 namespace NuGet.Services.TestCommon
 {
@@ -54,8 +53,7 @@ namespace NuGet.Services.TestCommon
             ContainerBuilder builder = new ContainerBuilder();
             builder.RegisterInstance(this).As<ServiceHost>();
             builder.RegisterType<ConfigurationHub>().UsingConstructor(typeof(ServiceHost));
-            builder.RegisterType<StorageHub>().UsingConstructor(typeof(ConfigurationHub));
-
+            
             if (_componentRegistrations != null)
             {
                 _componentRegistrations(builder);

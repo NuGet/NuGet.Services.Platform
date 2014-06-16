@@ -32,7 +32,8 @@ namespace NuGet.Services.Http
 
         protected async Task<TransferBlobResult> TransferBlob(Uri blobUri)
         {
-            var blob = await Service.Storage.Primary.Blobs.Client.GetBlobReferenceFromServerAsync(blobUri);
+            var blobClient = Service.Configuration.Storage.Primary.CreateCloudBlobClient();
+            var blob = await blobClient.GetBlobReferenceFromServerAsync(blobUri);
             return TransferBlob(blob);
         }
     }
