@@ -82,6 +82,11 @@ namespace NuGet.Services.Http
             Configure(app);
         }
 
+        protected override Task OnRun()
+        {
+            return Host.WhenShutdown();
+        }
+
         protected abstract void Configure(IAppBuilder app);
 
         public override void RegisterComponents(ContainerBuilder builder)
