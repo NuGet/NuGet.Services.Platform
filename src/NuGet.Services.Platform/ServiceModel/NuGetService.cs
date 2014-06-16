@@ -49,6 +49,7 @@ namespace NuGet.Services.ServiceModel
 
         public virtual async Task<bool> Start(ILifetimeScope scope)
         {
+            ServiceName.SetCurrent(ServiceName);
             Container = scope;
             
             Storage = scope.Resolve<StorageHub>();
@@ -66,6 +67,7 @@ namespace NuGet.Services.ServiceModel
 
         public virtual async Task Run()
         {
+            ServiceName.SetCurrent(ServiceName);
             if (Host == null)
             {
                 throw new InvalidOperationException(Strings.NuGetService_HostNotSet);

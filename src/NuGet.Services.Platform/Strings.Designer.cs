@@ -160,6 +160,15 @@ namespace NuGet.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An unknown error occurred..
+        /// </summary>
+        internal static string NuGetHttpService_UnknownError {
+            get {
+                return ResourceManager.GetString("NuGetHttpService_UnknownError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Host must be set using SetHost before invoking this method..
         /// </summary>
         internal static string NuGetService_HostNotSet {

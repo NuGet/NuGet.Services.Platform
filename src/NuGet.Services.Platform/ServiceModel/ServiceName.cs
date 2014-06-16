@@ -11,6 +11,8 @@ namespace NuGet.Services.ServiceModel
 {
     public struct ServiceName : IEquatable<ServiceName>
     {
+        private static readonly string CallContextKey = "NuGet.Services.ServiceModel.ServiceName.Current";
+
         private static readonly Regex Parser = new Regex(@"^-(?<service>[^\-]+)(?<rest>.+)?$", RegexOptions.IgnoreCase);
 
         public static readonly ServiceName Empty = new ServiceName();
@@ -96,6 +98,21 @@ namespace NuGet.Services.ServiceModel
                 }
                 return true;
             }
+        }
+
+        public static ServiceName GetCurrent()
+        {
+            var result = CallContext.LogicalGetData(CallContextKey);
+            if(result == null)
+            {
+                return ServiceName.Empty;
+            }
+            return (ServiceName)result;
+        }
+
+        public static void SetCurrent(ServiceName current)
+        {
+            CallContext.LogicalSetData(CallContextKey, current);
         }
     }
 }

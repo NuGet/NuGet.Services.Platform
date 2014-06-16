@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\NuGet.Services.Build.3.0.4-rel-4\build\NuGet.Services.Build.props" Condition="Exists('..\..\packages\NuGet.Services.Build.3.0.4-rel-4\build\NuGet.Services.Build.props')" />
+  <Import Project="..\..\packages\NuGet.Services.Build.3.0.5\build\NuGet.Services.Build.props" Condition="Exists('..\..\packages\NuGet.Services.Build.3.0.5\build\NuGet.Services.Build.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -13,7 +13,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Standalone>true</Standalone>
-    <NuGetPackageImportStamp>e0176153</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>7033e9d0</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -46,19 +46,19 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.SemanticLogging">
-      <HintPath>..\..\packages\EnterpriseLibrary.SemanticLogging.1.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.SemanticLogging.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\packages\EnterpriseLibrary.SemanticLogging.1.1.1403.1\lib\net45\Microsoft.Practices.EnterpriseLibrary.SemanticLogging.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Owin">
       <HintPath>..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="PowerArgs">
-      <HintPath>..\..\packages\PowerArgs.2.0.4.0-preview\lib\net40\PowerArgs.dll</HintPath>
+    <Reference Include="PowerArgs, Version=2.0.5.1, Culture=neutral, PublicKeyToken=26a276264bbd55b8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\PowerArgs.2.0.5.1\lib\net40\PowerArgs.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -90,10 +90,10 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\NuGet.Services.Build.3.0.4-rel-4\build\NuGet.Services.Build.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\NuGet.Services.Build.3.0.4-rel-4\build\NuGet.Services.Build.props'))" />
-    <Error Condition="!Exists('..\..\packages\NuGet.Services.Build.3.0.4-rel-4\build\NuGet.Services.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\NuGet.Services.Build.3.0.4-rel-4\build\NuGet.Services.Build.targets'))" />
+    <Error Condition="!Exists('..\..\packages\NuGet.Services.Build.3.0.5\build\NuGet.Services.Build.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\NuGet.Services.Build.3.0.5\build\NuGet.Services.Build.props'))" />
+    <Error Condition="!Exists('..\..\packages\NuGet.Services.Build.3.0.5\build\NuGet.Services.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\NuGet.Services.Build.3.0.5\build\NuGet.Services.Build.targets'))" />
   </Target>
-  <Import Project="..\..\packages\NuGet.Services.Build.3.0.4-rel-4\build\NuGet.Services.Build.targets" Condition="Exists('..\..\packages\NuGet.Services.Build.3.0.4-rel-4\build\NuGet.Services.Build.targets')" />
+  <Import Project="..\..\packages\NuGet.Services.Build.3.0.5\build\NuGet.Services.Build.targets" Condition="Exists('..\..\packages\NuGet.Services.Build.3.0.5\build\NuGet.Services.Build.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

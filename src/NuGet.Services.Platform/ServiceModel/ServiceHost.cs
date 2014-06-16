@@ -46,7 +46,7 @@ namespace NuGet.Services.ServiceModel
         public IReadOnlyDictionary<string, ServiceDefinition> Services { get; private set; }
         public IReadOnlyList<NuGetService> Instances { get; private set; }
         public IReadOnlyList<NuGetHttpService> HttpServiceInstances { get; private set; }
-        
+
         private IReadOnlyDictionary<Type, NuGetService> InstancesByType { get; set; }
         private IReadOnlyDictionary<string, NuGetService> InstancesByName { get; set; }
 
@@ -275,6 +275,19 @@ namespace NuGet.Services.ServiceModel
 
         protected virtual void Starting(NuGetService instance)
         {
+        }
+
+        protected virtual void ConfigurationChanging()
+        {
+        }
+
+        protected virtual void ConfigurationChanged()
+        {
+        }
+
+        protected virtual ServiceStatus GetCurrentStatus()
+        {
+            return ServiceStatus.Online;
         }
 
         /// <summary>
