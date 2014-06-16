@@ -106,9 +106,13 @@ namespace NuHost
                 ArgUsage.GetStyledUsage<Arguments>().Write();
                 return;
             }
-            
+
             // Set defaults
-            parsed.BaseDirectory = Path.GetFullPath(parsed.BaseDirectory ?? Environment.CurrentDirectory);
+            string inferredConfig = null;
+            parsed.BaseDirectory = Path.GetFullPath(String.IsNullOrEmpty(parsed.BaseDirectory) ? 
+                InferBaseDirectory(out inferredConfig) :
+                parsed.BaseDirectory);
+            Console.WriteLine("Using Base Directory: " + parsed.BaseDirectory);
 
             // Find services platform
             var platformAssemblyFile = Path.Combine(parsed.BaseDirectory, "NuGet.Services.Platform.dll");
@@ -118,11 +122,16 @@ namespace NuHost
                 return;
             }
 
-            // Check for config file
+            // Check for nuhost file
             var configFile = Path.Combine(parsed.BaseDirectory, "nuhost.json");
             var config = File.Exists(configFile) ?
                 NuHostConfig.Load(configFile) :
                 NuHostConfig.Default;
+
+            config.ClrConfigFile = String.IsNullOrEmpty(config.ClrConfigFile) ?
+                inferredConfig :
+                config.ClrConfigFile;
+
             if (!String.IsNullOrEmpty(config.ClrConfigFile))
             {
                 if (!Path.IsPathRooted(config.ClrConfigFile))
@@ -135,6 +144,75 @@ namespace NuHost
             ResolveAssembliesFromDirectory(parsed.BaseDirectory);
             
             LoadAndStartApp(parsed, config);
+        }
+
+        private string InferBaseDirectory(out string inferredConfigFile)
+        {
+            inferredConfigFile = null;
+            string baseDir;
+
+            // Are we in a NuGet Repo?
+            var repoFile = Path.Combine(Environment.CurrentDirectory, "Repository.props");
+            if (File.Exists(repoFile))
+            {
+                baseDir = InferFromRepositoryRoot(out inferredConfigFile);
+                if (!String.IsNullOrEmpty(baseDir))
+                {
+                    return baseDir;
+                }
+            }
+
+            // Nope, are we in a project directory?
+            var match = Directory.GetFiles(Environment.CurrentDirectory, "*.csproj").FirstOrDefault();
+            if (match != null)
+            {
+                baseDir = InferFromProject(match, out inferredConfigFile);
+                if (!String.IsNullOrEmpty(baseDir))
+                {
+                    return baseDir;
+                }
+            }
+
+            // Nope, well just use the current directory then
+            return Environment.CurrentDirectory;
+        }
+
+        private string InferFromProject(string projectFile, out string inferredConfigFile)
+        {
+            inferredConfigFile = null;
+
+            // Get the project name
+            string name = Path.GetFileNameWithoutExtension(projectFile);
+
+            // Check for the code
+            string outputDir = Path.Combine(Path.GetDirectoryName(projectFile), @"bin\Debug");
+            string dll = Path.Combine(outputDir, name + ".dll");
+            string config = Path.Combine(outputDir, name + ".dll.config");
+            if (File.Exists(dll))
+            {
+                if (File.Exists(config))
+                {
+                    inferredConfigFile = config;
+                }
+                return outputDir;
+            }
+            return null;
+        }
+
+        private string InferFromRepositoryRoot(out string inferredConfigFile)
+        {
+            inferredConfigFile = null;
+
+            // Check the current directory name
+            var repoName = Path.GetFileName(Environment.CurrentDirectory);
+
+            // Check for a project
+            string csproj = Path.Combine(Environment.CurrentDirectory, @"src\" + repoName + @"\" + repoName + ".csproj");
+            if (File.Exists(csproj))
+            {
+                return InferFromProject(csproj, out inferredConfigFile);
+            }
+            return null;
         }
 
         private void LoadAndStartApp(Arguments parsed, NuHostConfig config)

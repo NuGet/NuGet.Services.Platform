@@ -36,7 +36,7 @@ namespace NuGet.Services.Http
             app.UseWebApi(config);
         }
 
-        public override void RegisterComponents(Autofac.ContainerBuilder builder)
+        public override void RegisterComponents(ContainerBuilder builder)
         {
             base.RegisterComponents(builder);
             
@@ -81,6 +81,8 @@ namespace NuGet.Services.Http
             config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.LocalOnly;
             config.Filters.Add(new ApiExceptionFilter());
 
+            ConfigureRoutes(config.Routes);
+
             // Use Attribute routing
             var resolver = new DefaultInlineConstraintResolver();
             ConfigureAttributeRouting(resolver);
@@ -104,6 +106,9 @@ namespace NuGet.Services.Http
         }
 
         protected virtual void ConfigureAttributeRouting(DefaultInlineConstraintResolver resolver)
+        {
+        }
+        protected virtual void ConfigureRoutes(HttpRouteCollection routes)
         {
         }
 

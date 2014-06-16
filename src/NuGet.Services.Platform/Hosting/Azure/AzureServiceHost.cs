@@ -164,7 +164,7 @@ namespace NuGet.Services.Hosting.Azure
 
         protected override void InitializeCloudLogging()
         {
-            if (Storage.Primary != null)
+            if (Config.Storage.Primary != null)
             {
 				_subscriptions.Add(_platformEventStream.LogToWindowsAzureTable(
 	                instanceName: Description.InstanceName.ToString() + "/" + Description.MachineName,
@@ -175,7 +175,7 @@ namespace NuGet.Services.Hosting.Azure
 
         protected override void Starting(NuGetService instance)
         {
-            if (Storage.Primary != null)
+            if (Config.Storage.Primary != null)
             {
                 InitializeServiceLogging(instance);
             }
@@ -208,8 +208,8 @@ namespace NuGet.Services.Hosting.Azure
                 .Where(e => Equals(ServiceName.GetCurrent(), instance.ServiceName))
                 .LogToWindowsAzureTable(
                     instanceName: instance.ServiceName.ToString(),
-                    connectionString: Storage.Primary.ConnectionString,
-                    tableAddress: Storage.Primary.Tables.GetTableFullName(instance.ServiceName.Name + "Http"));
+                    connectionString: Config.Storage.Primary.GetConnectionString(),
+                    tableAddress: "NG" + instance.ServiceName.Name + "Http");
         }
 
         private ServiceHostInstanceName GetHostName()

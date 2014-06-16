@@ -180,6 +180,7 @@
     <Compile Include="Azure\AzureHub.cs" />
     <Compile Include="Azure\AzureHubEventSource.cs" />
     <Compile Include="CertificatesHub.cs" />
+    <Compile Include="Clock.cs" />
     <Compile Include="Common\HashCodeCombiner.cs" />
     <Compile Include="Common\Guard.cs" />
     <Compile Include="Common\GuardStrings.Designer.cs">
@@ -221,7 +222,6 @@
     <Compile Include="ServiceModel\ServiceStatus.cs" />
     <Compile Include="StorageExtensions.cs" />
     <Compile Include="TypeExtensions.cs" />
-    <Compile Include="Clock.cs" />
     <Compile Include="Configuration\ICustomConfigurationSection.cs" />
     <Compile Include="Configuration\ConfigurationErrorsException.cs" />
     <Compile Include="Configuration\ConfigurationHub.cs" />
