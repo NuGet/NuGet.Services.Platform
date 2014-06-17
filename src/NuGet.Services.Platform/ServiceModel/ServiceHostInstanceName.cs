@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace NuGet.Services.ServiceModel
 {
+    [Serializable] // This object is sent between AppDomains in NuHost, so it must be serializable.
     public struct ServiceHostInstanceName : IEquatable<ServiceHostInstanceName>
     {
         private static readonly Regex Parser = new Regex(@"^_IN(?<id>[0-9]+)(?<rest>.+)?$", RegexOptions.IgnoreCase);

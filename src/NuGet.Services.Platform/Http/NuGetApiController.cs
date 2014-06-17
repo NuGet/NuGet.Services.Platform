@@ -7,6 +7,8 @@ using System.Web.Http;
 using Autofac;
 using Microsoft.WindowsAzure.Storage.Blob;
 using NuGet.Services.ServiceModel;
+using System.Net.Http;
+using Microsoft.Owin;
 
 namespace NuGet.Services.Http
 {
@@ -15,6 +17,15 @@ namespace NuGet.Services.Http
         public ServiceHost Host { get; set; }
         public NuGetApiService Service { get; set; }
         public ILifetimeScope Container { get; set; }
+
+        public string RequestId
+        {
+            get
+            {
+                var ctx = Request.GetOwinContext();
+                return ctx.GetRequestId();
+            }
+        }
 
         public NuGetApiController()
         {
