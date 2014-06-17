@@ -8,7 +8,6 @@ using Moq;
 using NuGet.Services.Configuration;
 using NuGet.Services.Work.Azure;
 using Xunit;
-using Xunit.Extensions;
 
 namespace NuGet.Services.Azure
 {

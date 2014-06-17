@@ -103,7 +103,7 @@ namespace NuHost
             var parsed = Args.Parse<Arguments>(args);
             if (parsed.Help)
             {
-                ArgUsage.GetStyledUsage<Arguments>().Write();
+                ArgUsage.GenerateUsageFromTemplate<Arguments>().Write();
                 return;
             }
 
