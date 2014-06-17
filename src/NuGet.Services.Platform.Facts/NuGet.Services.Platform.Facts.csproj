@@ -132,7 +132,6 @@
     <Compile Include="Mockery.cs" />
     <Compile Include="NuGetCertificateFacts.cs" />
     <Compile Include="ServiceModel\NuGetServiceFacts.cs" />
-    <Compile Include="Storage\AzureTableEntityFacts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

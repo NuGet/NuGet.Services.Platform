@@ -11,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Practices.EnterpriseLibrary.SemanticLogging;
 using Microsoft.Practices.EnterpriseLibrary.SemanticLogging.Sinks;
-using NuGet.Services.Storage;
 using NuGet.Services.Configuration;
 using Autofac;
 using Autofac.Core;
@@ -28,7 +27,6 @@ namespace NuGet.Services.ServiceModel
         public ServiceHost Host { get; private set; }
         public ServiceName ServiceName { get; private set; }
 
-        public StorageHub Storage { get; set; }
         public ConfigurationHub Configuration { get; set; }
         public ILifetimeScope Container { get; protected set; }
 
@@ -52,7 +50,6 @@ namespace NuGet.Services.ServiceModel
             ServiceName.SetCurrent(ServiceName);
             Container = scope;
             
-            Storage = scope.Resolve<StorageHub>();
             Configuration = scope.Resolve<ConfigurationHub>();
 
             if (Host == null)

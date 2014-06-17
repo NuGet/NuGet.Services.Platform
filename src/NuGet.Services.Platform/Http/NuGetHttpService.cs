@@ -9,22 +9,15 @@ namespace NuGet.Services.Http
 {
     public abstract class NuGetHttpService : NuGetService
     {
-        private TaskCompletionSource<object> _shutdownSource = new TaskCompletionSource<object>();
+        private readonly PathString _defaultPathString;
 
-        public abstract PathString BasePath
-        { get; }
-
-        protected NuGetHttpService(ServiceName name, ServiceHost host) : base(name, host)
-        { }
-
-        protected override Task OnRun()
+        public virtual PathString BasePath
         {
-            return _shutdownSource.Task;
+            get { return _defaultPathString; }
         }
 
-        protected override void OnShutdown()
-        {
-            _shutdownSource.SetResult(true);
+        protected NuGetHttpService(ServiceName name, ServiceHost host) : base(name, host) {
+            _defaultPathString = new PathString("/" + name.Name.ToLowerInvariant());
         }
 
         public virtual void StartHttp(IAppBuilder app)
@@ -80,6 +73,11 @@ namespace NuGet.Services.Http
                 }
             });
             Configure(app);
+        }
+
+        protected override Task OnRun()
+        {
+            return Host.WhenShutdown();
         }
 
         protected abstract void Configure(IAppBuilder app);

@@ -83,6 +83,7 @@ namespace NuGet.Services.Test.Echo
             {
                 a.Use(async (ctx, next) =>
                 {
+                    await ctx.Response.WriteAsync("Throwing!");
                     throw new Exception("Throw me a frickin' bone!");
                 });
             });
