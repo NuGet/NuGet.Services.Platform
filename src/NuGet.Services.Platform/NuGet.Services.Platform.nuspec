@@ -14,6 +14,9 @@
         <releaseNotes></releaseNotes>
         <copyright>Copyright 2014 Outercurve Foundation</copyright>
         <tags>nuget services gallery</tags>
+        <dependencies>
+            <dependency id="NuGet.Services.Platform.Client" version="$version$" />
+        </dependencies>
     </metadata>
     <files>
         <file src="bin\$configuration$\NuGet.Services.Platform.dll.config" target="lib\net45" />
