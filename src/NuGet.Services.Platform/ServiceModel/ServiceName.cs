@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace NuGet.Services.ServiceModel
 {
-    [Serializable]
     public struct ServiceName : IEquatable<ServiceName>
     {
         private static readonly string CallContextKey = "NuGet.Services.ServiceModel.ServiceName.Current";
@@ -108,12 +107,12 @@ namespace NuGet.Services.ServiceModel
             {
                 return ServiceName.Empty;
             }
-            return (ServiceName)result;
+            return ServiceName.Parse((string)result);
         }
 
         public static void SetCurrent(ServiceName current)
         {
-            CallContext.LogicalSetData(CallContextKey, current);
+            CallContext.LogicalSetData(CallContextKey, current.ToString());
         }
     }
 }
