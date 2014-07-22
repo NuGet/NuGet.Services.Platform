@@ -136,6 +136,7 @@ namespace NuGet.Services.Http.Middleware
                         NonpagedSystemMemorySize = proc.NonpagedSystemMemorySize64,
                         Threads = proc.Threads.Count,
                     },
+                    Instances = Host.GetHostInstances(),
                     NuGetAssemblies = nugetAssemblies,
                     Assemblies = allAssemblies
                 };

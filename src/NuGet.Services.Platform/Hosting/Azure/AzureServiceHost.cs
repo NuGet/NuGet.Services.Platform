@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Tracing;
@@ -103,6 +104,14 @@ namespace NuGet.Services.Hosting.Azure
             {
                 sub.Dispose();
             }
+        }
+
+        public override IEnumerable<ServiceHostInstanceInfo> GetHostInstances()
+        {
+            return RoleEnvironment.CurrentRoleInstance.Role.Instances
+                .Select(r => new ServiceHostInstanceInfo(
+                    r.Id, 
+                    r.InstanceEndpoints.ToDictionary(p => p.Key, p => p.Value.IPEndpoint.ToString())));
         }
 
         protected override IEnumerable<string> GetHttpUrls()

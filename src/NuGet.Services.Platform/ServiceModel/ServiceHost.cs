@@ -380,5 +380,10 @@ namespace NuGet.Services.ServiceModel
             }
             return null;
         }
+
+        public virtual IEnumerable<ServiceHostInstanceInfo> GetHostInstances()
+        {
+            return Enumerable.Empty<ServiceHostInstanceInfo>();
+        }
     }
 }

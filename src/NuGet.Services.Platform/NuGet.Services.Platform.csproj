@@ -219,6 +219,7 @@
     <Compile Include="ServiceModel\EnvironmentName.cs" />
     <Compile Include="ServiceModel\ServiceAttribute.cs" />
     <Compile Include="ServiceModel\ServiceDefinition.cs" />
+    <Compile Include="ServiceModel\ServiceHostInstanceInfo.cs" />
     <Compile Include="ServiceModel\ServiceHostInstanceName.cs" />
     <Compile Include="ServiceModel\ServiceStatus.cs" />
     <Compile Include="StorageExtensions.cs" />
