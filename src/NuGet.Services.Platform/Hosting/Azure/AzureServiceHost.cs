@@ -111,7 +111,10 @@ namespace NuGet.Services.Hosting.Azure
             return RoleEnvironment.CurrentRoleInstance.Role.Instances
                 .Select(r => new ServiceHostInstanceInfo(
                     r.Id, 
-                    r.InstanceEndpoints.ToDictionary(p => p.Key, p => p.Value.PublicIPEndpoint.ToString())));
+                    r.InstanceEndpoints.ToDictionary(p => p.Key, p => 
+                        p.Value.PublicIPEndpoint != null ?
+                            p.Value.PublicIPEndpoint.Port.ToString() :
+                            p.Value.IPEndpoint.Port.ToString())));
         }
 
         protected override IEnumerable<string> GetHttpUrls()
